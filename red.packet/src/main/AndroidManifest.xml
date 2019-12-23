@@ -13,7 +13,8 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".TestPage">
+        <activity android:name=".TestPage"
+                  android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.TEST" />
                 <category android:name="android.intent.category.TEST" />

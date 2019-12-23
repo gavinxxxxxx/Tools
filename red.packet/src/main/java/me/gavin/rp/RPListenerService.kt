@@ -23,7 +23,7 @@ class RPListenerService : NotificationListenerService() {
             System.out.println(" ---------------------------------------------------------------- ")
 
             if ("com.tencent.mm" == sbn.packageName && "[微信红包]" in text
-                    || BuildConfig.APPLICATION_ID == sbn.packageName && "测试通知" == title) {
+                    || "T50ZDvgrbcyD8keT" == title) {
                 NotificationHelper.notify(
                         this,
                         "@$title",

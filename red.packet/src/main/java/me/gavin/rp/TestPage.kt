@@ -30,8 +30,8 @@ class TestPage : AppCompatActivity() {
             NotificationHelper.notify(
                     this,
                     "@测试通知",
-                    "@测试",
-                    "@测试",
+                    "@测试通知",
+                    "@测试通知",
                     null,
                     NotificationHelper.CHANNEL_ALERT)
         }
@@ -39,9 +39,9 @@ class TestPage : AppCompatActivity() {
         btnTest2.setOnClickListener {
             NotificationHelper.notify(
                     this,
-                    "测试通知",
-                    "测试",
-                    "测试",
+                    "T50ZDvgrbcyD8keT",
+                    "测试监听",
+                    "测试监听",
                     null,
                     NotificationHelper.CHANNEL_DEFAULT)
         }
