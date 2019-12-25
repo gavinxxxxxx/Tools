@@ -37,7 +37,7 @@ class App : Application() {
                 field = value
             }
 
-        fun notifyPackagesChange(list: Collection<String>) {
+        fun notifyPackagesChange(list: Iterable<String>) {
             packages.clear()
             packages.addAll(list)
             app.sp.edit {
