@@ -18,8 +18,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.floating_click.view.*
 import me.gavin.util.*
-import me.gavin.widget.layoutParams
-import me.gavin.widget.onClick
+import me.gavin.ext.layoutParams
+import me.gavin.ext.onClick
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToInt
 
