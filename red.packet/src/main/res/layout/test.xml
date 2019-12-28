@@ -28,6 +28,13 @@
         android:text="通知" />
 
     <Button
+        android:id="@+id/btnAS"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="辅助功能" />
+
+    <Button
         android:id="@+id/btnTest"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

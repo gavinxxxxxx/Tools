@@ -24,6 +24,9 @@ class RPListenerService : NotificationListenerService() {
 
             if ("com.tencent.mm" == sbn.packageName && "[微信红包]" in text
                     || "T50ZDvgrbcyD8keT" == title) {
+
+                sbn.notification.contentIntent?.send()
+
                 NotificationHelper.notify(
                         this,
                         "@$title",
