@@ -26,12 +26,11 @@ class RPAccessibilityService : AccessibilityService() {
 
         // 打开红包消息
         rootInActiveWindow
-            ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/atb") // 红包/图片 消息点击事件绑定组件
-            ?.filter {
+            ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/atb")
+            ?.lastOrNull {
                 it.findAccessibilityNodeInfosByText("微信红包").any() && // 是微信红包
                         it.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/aul").none() // 已领取/已过期
             }
-            ?.lastOrNull()
             ?.also { println(it) }
             ?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
