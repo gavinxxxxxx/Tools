@@ -6,6 +6,9 @@ import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationManagerCompat
+import android.app.KeyguardManager
+import androidx.core.content.getSystemService
+
 
 class RPListenerService : NotificationListenerService() {
 
@@ -25,7 +28,9 @@ class RPListenerService : NotificationListenerService() {
             if ("com.tencent.mm" == sbn.packageName && "[微信红包]" in text
                     || "T50ZDvgrbcyD8keT" == title) {
 
-                sbn.notification.contentIntent?.send()
+                if (!isKeyguardLocked(this)) {
+                    sbn.notification.contentIntent?.send()
+                }
 
                 NotificationHelper.notify(
                         this,
@@ -39,6 +44,10 @@ class RPListenerService : NotificationListenerService() {
         }
     }
 
+}
+
+fun isKeyguardLocked(context: Context):Boolean {
+    return context.getSystemService<KeyguardManager>()?.isKeyguardLocked ?: true
 }
 
 fun isNotificationListenerEnabled(context: Context): Boolean {
