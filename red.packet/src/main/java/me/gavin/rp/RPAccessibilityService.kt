@@ -29,7 +29,7 @@ class RPAccessibilityService : AccessibilityService() {
             ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/atb")
             ?.lastOrNull {
                 it.findAccessibilityNodeInfosByText("微信红包").any() && // 是微信红包
-                        it.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/aul").none() // 已领取/已过期
+                        it.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/aul").none() // 已领取/已被领完/已过期/
             }
             ?.also { println(it) }
             ?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
@@ -63,6 +63,10 @@ class RPAccessibilityService : AccessibilityService() {
     }
 
     private val handle = Handler()
+
+    private fun AccessibilityNodeInfo.clickTarget(): AccessibilityNodeInfo? {
+        return if (isClickable) this else parent?.clickTarget()
+    }
 
 }
 
