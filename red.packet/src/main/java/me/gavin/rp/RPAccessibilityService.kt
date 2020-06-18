@@ -26,10 +26,10 @@ class RPAccessibilityService : AccessibilityService() {
 
         // 打开红包消息
         rootInActiveWindow
-            ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/atb")
+            ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/al7")
             ?.lastOrNull {
                 it.findAccessibilityNodeInfosByText("微信红包").any() && // 是微信红包
-                        it.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/aul").none() // 已领取/已被领完/已过期/
+                        it.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/r0").none() // 已领取/已被领完/已过期/
             }
             ?.also { println(it) }
             ?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
@@ -40,7 +40,7 @@ class RPAccessibilityService : AccessibilityService() {
         ) {
             handle.postDelayed({
                 rootInActiveWindow
-                    ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/dan")
+                    ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/den") // 开
                     ?.firstOrNull()
                     ?.also { println(it) }
                     ?.performAction(AccessibilityNodeInfo.ACTION_CLICK)

@@ -34,6 +34,7 @@ class RPListenerService : NotificationListenerService() {
             println(" ---------------------------------------------------------------- ")
             println(title)
             println(text)
+            println(t)
             println(" ---------------------------------------------------------------- ")
 
             if (sbn.packageName in App.packages || title == "T50ZDvgrbcyD8keT") {
@@ -42,8 +43,8 @@ class RPListenerService : NotificationListenerService() {
                     channel = getAppName(sbn.packageName),
                     tag = sbn.tag,
                     id = sbn.id,
-                    title = title,
-                    content = text,
+                    title = "@$title",
+                    content = "@$text",
                     intent = sbn.notification.contentIntent
                 )
                 cancelNotification(sbn.key)
