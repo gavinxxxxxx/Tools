@@ -8,31 +8,43 @@ import android.os.Build
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import androidx.core.app.NotificationManagerCompat
-
+import me.gavin.base.cast
+import me.gavin.base.takeOrElse
 
 class RPListenerService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
         if (!App.state) return
 
-        sbn.notification?.extras?.let {
-            val title = it[Notification.EXTRA_TITLE] as? String
-                ?: it[Notification.EXTRA_TITLE_BIG] as? String ?: return
-            val text = it[Notification.EXTRA_TEXT] as? String
-                ?: it[Notification.EXTRA_BIG_TEXT] as? String ?: return
-            System.out.println(" ---------------------------------------------------------------- ")
-            System.out.println(title)
-            System.out.println(text)
-            System.out.println(" ---------------------------------------------------------------- ")
+        sbn.notification?.extras?.let { t ->
+            val title = t[Notification.EXTRA_TITLE_BIG]
+                .cast<String?>()
+                .let {
+                    it.takeOrElse({ it.isNullOrBlank() }) {
+                        t[Notification.EXTRA_TITLE].cast()
+                    }.orEmpty()
+                }
+            val text = t[Notification.EXTRA_BIG_TEXT]
+                .cast<String?>()
+                .let {
+                    it.takeOrElse({ it.isNullOrBlank() }) {
+                        t[Notification.EXTRA_TEXT].cast()
+                    }.orEmpty()
+                }
+            println(" ---------------------------------------------------------------- ")
+            println(title)
+            println(text)
+            println(" ---------------------------------------------------------------- ")
 
             if (sbn.packageName in App.packages || title == "T50ZDvgrbcyD8keT") {
                 NotificationHelper.notify(
-                    this,
-                    "@$title",
-                    "@$text",
-                    getAppName(sbn.packageName),
-                    sbn.notification.contentIntent,
-                    NotificationHelper.CHANNEL_ALERT
+                    context = this,
+                    channel = getAppName(sbn.packageName),
+                    tag = sbn.tag,
+                    id = sbn.id,
+                    title = title,
+                    content = text,
+                    intent = sbn.notification.contentIntent
                 )
                 cancelNotification(sbn.key)
             }
