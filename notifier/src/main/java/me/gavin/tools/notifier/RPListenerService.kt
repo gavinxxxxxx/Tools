@@ -20,14 +20,14 @@ class RPListenerService : NotificationListenerService() {
             val title = t[Notification.EXTRA_TITLE_BIG]
                 .cast<String?>()
                 .let {
-                    it.takeOrElse({ it.isNullOrBlank() }) {
+                    it.takeOrElse({ !it.isNullOrBlank() }) {
                         t[Notification.EXTRA_TITLE].cast()
                     }.orEmpty()
                 }
             val text = t[Notification.EXTRA_BIG_TEXT]
                 .cast<String?>()
                 .let {
-                    it.takeOrElse({ it.isNullOrBlank() }) {
+                    it.takeOrElse({ !it.isNullOrBlank() }) {
                         t[Notification.EXTRA_TEXT].cast()
                     }.orEmpty()
                 }
