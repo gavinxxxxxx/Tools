@@ -22,9 +22,9 @@ class TestActivity : AppCompatActivity() {
             }
         }
 
-        Switch02.isChecked = checkPermission4Accessibility<IAccessibilityService>()
+        Switch02.isChecked = checkPermission4Accessibility<TaskAccessibilityService>()
         Switch02.setOnClickListener {
-            doIfPermissionGrant4Accessibility<IAccessibilityService> {
+            doIfPermissionGrant4Accessibility<TaskAccessibilityService> {
 
             }
         }

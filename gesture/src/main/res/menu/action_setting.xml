@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/actionSetting"
+        android:title="设置"
+        app:showAsAction="always"
+        tools:visible="true"
+        tools:ignore="AlwaysShowAction,HardcodedText"/>
+
+    <item
+        android:id="@+id/actionLoading"
+        android:title="@string/label_loading_loading"
+        android:visible="false"
+        app:actionLayout="@layout/widget_action_progress"
+        app:showAsAction="always"
+        tools:visible="true" />
+
+</menu>

@@ -8,9 +8,16 @@ import me.gavin.util.getScreenWidth
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
+private val w get() = getScreenWidth()
+private val h get() = getScreenHeight()
+
+private fun getVal(v: Float, d: Float, s: Int): Float {
+    return ((s * (v - abs(d))).roundToInt()..(s * (v + abs(d))).roundToInt()).random().toFloat()
+}
+
 fun AccessibilityService.tap(x: Float, y: Float, dx: Float = 0f, dy: Float = 0f) {
-    val rx = ((getScreenWidth() * (x - abs(dx))).roundToInt()..(getScreenWidth() * (x + abs(dx))).roundToInt()).random().toFloat()
-    val ry = ((getScreenHeight() * (y - abs(dy))).roundToInt()..(getScreenHeight() * (y + abs(dy))).roundToInt()).random().toFloat()
+    val rx = getVal(x, dx, w)
+    val ry = getVal(y, dy, h)
     "tap - $rx - $ry".let(::println)
     val path = Path().apply { moveTo(rx, ry) }
     GestureDescription.Builder()
@@ -33,11 +40,11 @@ fun AccessibilityService.tap(x: Float, y: Float, dx: Float = 0f, dy: Float = 0f)
 
 fun AccessibilityService.scroll(x1: Float, y1: Float, x2: Float, y2: Float, dx: Float = 0f, dy: Float = 0f) {
     val path = Path().apply {
-        val rx1 = ((getScreenWidth() * (x1 - abs(dx))).roundToInt()..(getScreenWidth() * (x1 + abs(dx))).roundToInt()).random().toFloat()
-        val ry1 = ((getScreenHeight() * (y1 - abs(dy))).roundToInt()..(getScreenHeight() * (y1 + abs(dy))).roundToInt()).random().toFloat()
+        val rx1 = getVal(x1, dx, w)
+        val ry1 = getVal(y1, dy, h)
         moveTo(rx1, ry1)
-        val rx2 = ((getScreenWidth() * (x2 - abs(dx))).roundToInt()..(getScreenWidth() * (x2 + abs(dx))).roundToInt()).random().toFloat()
-        val ry2 = ((getScreenHeight() * (y2 - abs(dy))).roundToInt()..(getScreenHeight() * (y2 + abs(dy))).roundToInt()).random().toFloat()
+        val rx2 = getVal(x2, dx, w)
+        val ry2 = getVal(y2, dy, h)
         "scroll - ($rx1,$ry1) -> ($rx2,$ry2)".let(::println)
         lineTo(rx2, ry2)
     }
@@ -57,4 +64,20 @@ fun AccessibilityService.scroll(x1: Float, y1: Float, x2: Float, y2: Float, dx: 
                     }
                 }, null)
             }
+}
+
+fun AccessibilityService.back() {
+    performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
+}
+
+fun AccessibilityService.home() {
+    performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
+}
+
+fun AccessibilityService.recent() {
+    performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
+}
+
+fun AccessibilityService.notification() {
+    performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
 }
