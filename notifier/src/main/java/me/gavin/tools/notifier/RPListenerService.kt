@@ -14,7 +14,7 @@ import me.gavin.base.takeOrElse
 class RPListenerService : NotificationListenerService() {
 
     override fun onNotificationPosted(sbn: StatusBarNotification) {
-        if (!App.state) return
+        if (!App.state || sbn.packageName == BuildConfig.APPLICATION_ID) return
 
         sbn.notification?.extras?.let { t ->
             val title = t[Notification.EXTRA_TITLE_BIG]
