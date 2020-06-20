@@ -15,13 +15,13 @@ private fun getVal(v: Float, d: Float, s: Int): Float {
     return ((s * (v - abs(d))).roundToInt()..(s * (v + abs(d))).roundToInt()).random().toFloat()
 }
 
-fun AccessibilityService.tap(x: Float, y: Float, dx: Float = 0f, dy: Float = 0f) {
+fun AccessibilityService.tap(x: Float, y: Float, dx: Float = 0f, dy: Float = 0f, duration: Long = 50) {
     val rx = getVal(x, dx, w)
     val ry = getVal(y, dy, h)
     "tap - $rx - $ry".let(::println)
     val path = Path().apply { moveTo(rx, ry) }
     GestureDescription.Builder()
-            .addStroke(GestureDescription.StrokeDescription(path, 100, 50))
+            .addStroke(GestureDescription.StrokeDescription(path, 0, duration))
             .build()
             .let {
                 dispatchGesture(it, object : AccessibilityService.GestureResultCallback() {

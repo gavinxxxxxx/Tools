@@ -15,9 +15,11 @@
             android:text="触摸延迟(ms)" />
 
         <EditText
+            android:id="@+id/etDelay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number" />
+            android:inputType="number"
+            android:text="500" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -25,9 +27,11 @@
             android:text="触摸时长(ms)" />
 
         <EditText
+            android:id="@+id/etDuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number" />
+            android:inputType="number"
+            android:text="50" />
 
     </LinearLayout>
 
