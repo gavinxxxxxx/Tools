@@ -24,17 +24,18 @@ fun AccessibilityService.tap(x: Float, y: Float, dx: Float = 0f, dy: Float = 0f,
             .addStroke(GestureDescription.StrokeDescription(path, 0, duration))
             .build()
             .let {
-                dispatchGesture(it, object : AccessibilityService.GestureResultCallback() {
-                    override fun onCancelled(gestureDescription: GestureDescription) {
-                        super.onCancelled(gestureDescription)
-                        println("GestureResultCallback - onCancelled - ")
-                    }
-
-                    override fun onCompleted(gestureDescription: GestureDescription) {
-                        super.onCompleted(gestureDescription)
-                        println("GestureResultCallback - onCompleted - ")
-                    }
-                }, null)
+                dispatchGesture(it, null, null)
+//                dispatchGesture(it, object : AccessibilityService.GestureResultCallback() {
+//                    override fun onCancelled(gestureDescription: GestureDescription) {
+//                        super.onCancelled(gestureDescription)
+//                        println("GestureResultCallback - onCancelled - ")
+//                    }
+//
+//                    override fun onCompleted(gestureDescription: GestureDescription) {
+//                        super.onCompleted(gestureDescription)
+//                        println("GestureResultCallback - onCompleted - ")
+//                    }
+//                }, null)
             }
 }
 

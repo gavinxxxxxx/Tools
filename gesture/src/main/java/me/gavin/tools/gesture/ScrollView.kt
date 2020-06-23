@@ -37,19 +37,6 @@ class ScrollView(context: Context, val windowManager: WindowManager) : View(cont
 
     private val lp by lazy { layoutParams<WindowManager.LayoutParams>() }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
-//        setMeasuredDimension((abs(ePoint.x - sPoint.x) + radius * 2).roundToInt(),
-//                (abs(ePoint.y - sPoint.y) + radius * 2).roundToInt())
-
-//        translationX = min(sPoint.x, ePoint.x) - radius
-//        translationY = min(sPoint.y, ePoint.y) - radius
-//        left = min(sPoint.x, ePoint.x).roundToInt()
-//        right = max(sPoint.x, ePoint.x).roundToInt()
-//        top = min(sPoint.y, ePoint.y).roundToInt()
-//        bottom = max(sPoint.y, ePoint.y).roundToInt()
-    }
-
 //    override fun onTouchEvent(event: MotionEvent): Boolean {
 //        when (event.action) {
 //            MotionEvent.ACTION_DOWN -> {
@@ -81,10 +68,6 @@ class ScrollView(context: Context, val windowManager: WindowManager) : View(cont
 //    }
 
     override fun onDraw(canvas: Canvas) {
-        "onDraw - ".print()
-
-        canvas.drawColor(0x40000000)
-
         canvas.drawCircle(sPoint.x - lp.x, sPoint.y - lp.y, radius, paint.apply {
             style = Paint.Style.STROKE
         })
