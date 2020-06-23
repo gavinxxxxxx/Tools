@@ -56,7 +56,7 @@ val layoutParams4event
 fun AccessibilityService.execute(e: Event) {
     when (e.action) {
         EVENT_CLICK -> tap(e.x0!!, e.y0!!, e.dx ?: 0.01f, e.dy ?: 0.01f, e.duration ?: 50)
-        EVENT_SCROLL -> scroll(e.x0!!, e.y0!!, e.x1!!, e.y1!!, e.dx ?: 0.01f, e.dy ?: 0.01f)
+        EVENT_SCROLL -> scroll(e.x0!!, e.y0!!, e.x1!!, e.y1!!, e.dx ?: 0.01f, e.dy ?: 0.01f, e.duration ?: 500)
         EVENT_BACK -> back()
         EVENT_HOME -> home()
         EVENT_RECENT -> recent()

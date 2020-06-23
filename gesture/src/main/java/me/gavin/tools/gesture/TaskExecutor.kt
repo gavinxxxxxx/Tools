@@ -23,12 +23,14 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
         disposable = task.events
                 .mapIndexed { i, e ->
                     val delay = e.delay ?: 500L
-                    val duration = task.events.getOrNull(i - 1)?.let { it.duration ?: 500 } ?: 0
+                    val duration = task.events.getOrNull(i - 1)?.duration ?: 50L
                     Observable.just(e).delay(delay + duration, TimeUnit.MILLISECONDS)
                 }
                 .toTypedArray()
                 .let { Observable.concatArray(*it) }
-                .repeat()
+                .repeatWhen {
+                    it.delay(task.events.last().duration ?: 50L, TimeUnit.MILLISECONDS)
+                }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
                     println("$it - ${Looper.myLooper() == Looper.getMainLooper()}")

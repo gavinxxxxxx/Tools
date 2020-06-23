@@ -2,8 +2,6 @@ package me.gavin.tools.gesture
 
 import android.accessibilityservice.AccessibilityService
 import android.view.accessibility.AccessibilityEvent
-import io.reactivex.disposables.Disposable
-import me.gavin.util.RxBus
 import me.gavin.util.checkPermission4Floating
 import me.gavin.util.log
 import me.gavin.util.toast

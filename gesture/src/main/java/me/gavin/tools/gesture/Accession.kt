@@ -38,18 +38,18 @@ fun AccessibilityService.tap(x: Float, y: Float, dx: Float = 0f, dy: Float = 0f,
             }
 }
 
-fun AccessibilityService.scroll(x1: Float, y1: Float, x2: Float, y2: Float, dx: Float = 0f, dy: Float = 0f) {
+fun AccessibilityService.scroll(x0: Float, y0: Float, x1: Float, y1: Float, dx: Float = 0f, dy: Float = 0f, duration: Long = 500) {
     val path = Path().apply {
+        val rx0 = getVal(x0, dx, w)
+        val ry0 = getVal(y0, dy, h)
+        moveTo(rx0, ry0)
         val rx1 = getVal(x1, dx, w)
         val ry1 = getVal(y1, dy, h)
-        moveTo(rx1, ry1)
-        val rx2 = getVal(x2, dx, w)
-        val ry2 = getVal(y2, dy, h)
-        "scroll - ($rx1,$ry1) -> ($rx2,$ry2)".let(::println)
-        lineTo(rx2, ry2)
+        "scroll - ($rx0,$ry0) -> ($rx1,$ry1)".let(::println)
+        lineTo(rx1, ry1)
     }
     GestureDescription.Builder()
-            .addStroke(GestureDescription.StrokeDescription(path, 20, 500))
+            .addStroke(GestureDescription.StrokeDescription(path, 0, duration))
             .build()
             .let {
                 dispatchGesture(it, object : AccessibilityService.GestureResultCallback() {
