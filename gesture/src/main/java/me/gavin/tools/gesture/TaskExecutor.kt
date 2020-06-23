@@ -29,7 +29,7 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
                 .toTypedArray()
                 .let { Observable.concatArray(*it) }
                 .repeatWhen {
-                    it.delay(task.events.last().duration ?: 50L, TimeUnit.MILLISECONDS)
+                    it.delay(task.events.lastOrNull()?.duration ?: 50L, TimeUnit.MILLISECONDS)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {

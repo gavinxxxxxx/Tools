@@ -51,6 +51,7 @@ class TaskCreator(private val service: AccessibilityService) {
                     task.events.forEach { e ->
                         e.target?.layoutParams<WindowManager.LayoutParams>()?.let {
                             it.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
                             windowManager.updateViewLayout(e.target, it)
                         }
@@ -203,7 +204,7 @@ class TaskCreator(private val service: AccessibilityService) {
     }
 
     private fun addKey(event: String) {
-        task.events += Event(event)
+        task.events += Event(event, delay = 500, duration = 500)
     }
 
     private fun removeEvent() {
