@@ -5,11 +5,10 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
-import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import me.gavin.ext.layoutParams
-import me.gavin.util.print
+import me.gavin.util.dp2pxF
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.pow
@@ -21,7 +20,7 @@ class ScrollView(context: Context, val windowManager: WindowManager) : View(cont
     val sPoint = PointF(200f, 200f)
     val ePoint = PointF(400f, 400f)
 
-    val radius = 20f
+    val radius = 10f.dp2pxF(resources)
 
     var l = (min(sPoint.x, ePoint.x) - radius).roundToInt()
     var t = (min(sPoint.y, ePoint.y) - radius).roundToInt()

@@ -37,23 +37,23 @@ class TaskCreator(private val service: AccessibilityService) {
                 if (it.isSelected) {
                     it.isSelected = false
                     arrayOf(ivAdd, ivRemove, ivClose).forEach { it.isEnabled = true }
-                    task.events.forEach { e ->
-                        e.target?.layoutParams<WindowManager.LayoutParams>()?.let {
+                    task.targets.forEach { v ->
+                        v.layoutParams<WindowManager.LayoutParams>().let {
                             it.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                            windowManager.updateViewLayout(e.target, it)
+                            windowManager.updateViewLayout(v, it)
                         }
                     }
                 } else if (task.events.isNotEmpty()) {
                     it.isSelected = true
                     arrayOf(ivAdd, ivRemove, ivClose).forEach { it.isEnabled = false }
-                    task.events.forEach { e ->
-                        e.target?.layoutParams<WindowManager.LayoutParams>()?.let {
+                    task.targets.forEach { v ->
+                        v.layoutParams<WindowManager.LayoutParams>().let {
                             it.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                            windowManager.updateViewLayout(e.target, it)
+                            windowManager.updateViewLayout(v, it)
                         }
                     }
                     taskExecutor = TaskExecutor(service, task).also { it.execute() }
@@ -88,9 +88,7 @@ class TaskCreator(private val service: AccessibilityService) {
     fun destroy() {
         taskExecutor?.dispose()
         windowManager.removeView(widget)
-        task.events.forEach {
-            it.target?.let { windowManager.removeView(it) }
-        }
+        task.targets.forEach { windowManager.removeView(it) }
     }
 
     private fun selectEventType(view: View) {
@@ -118,7 +116,7 @@ class TaskCreator(private val service: AccessibilityService) {
                     x = event.rawX.roundToInt() - v.measuredWidth / 2
                     y = event.rawY.roundToInt() - v.measuredHeight / 2
                     windowManager.updateViewLayout(v, this)
-                    task.events.find { it.target == v }?.run {
+                    task.findEventByView(v)?.run {
                         x0 = event.rawX / ww
                         y0 = event.rawY / wh
                     }
@@ -126,7 +124,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 false
             }
             setOnLongClickListener {
-                task.events.find { it.target == this }?.let { dialogg(it) }
+                task.findEventByView(it)?.let { dialogg(it) }
                 true
             }
         }.also {
@@ -136,7 +134,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 x = getScreenWidth() / 2 - it.measuredWidth / 2
                 y = getScreenHeight() / 2 - it.measuredHeight / 2
                 windowManager.addView(it, this)
-                task.events += Event(EVENT_CLICK, target = it).apply {
+                task.events += Event(EVENT_CLICK, targets = listOf(it)).apply {
                     x0 = (x + it.measuredWidth / 2).toFloat() / ww
                     y0 = (y + it.measuredHeight / 2).toFloat() / wh
                 }
@@ -171,7 +169,7 @@ class TaskCreator(private val service: AccessibilityService) {
                             width = w
                             height = h
                             windowManager.updateViewLayout(v, this)
-                            task.events.find { it.target == v }?.run {
+                            task.findEventByView(v)?.run {
                                 x0 = sPoint.x / ww
                                 y0 = sPoint.y / wh
                                 x1 = ePoint.x / ww
@@ -183,7 +181,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 false
             }
             setOnLongClickListener {
-                task.events.find { it.target == this }?.let { dialogg(it) }
+                task.findEventByView(it)?.let { dialogg(it) }
                 true
             }
         }.also {
@@ -193,7 +191,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 width = it.w
                 height = it.h
                 windowManager.addView(it, this)
-                task.events += Event(EVENT_SCROLL, target = it).apply {
+                task.events += Event(EVENT_SCROLL, targets = listOf(it)).apply {
                     x0 = it.sPoint.x / ww
                     y0 = it.sPoint.y / wh
                     x1 = it.ePoint.x / ww
@@ -209,7 +207,7 @@ class TaskCreator(private val service: AccessibilityService) {
 
     private fun removeEvent() {
         task.events.lastOrNull()?.let {
-            it.target?.let { windowManager.removeView(it) }
+            it.targets?.forEach { windowManager.removeView(it) }
             task.events.remove(it)
         }
     }

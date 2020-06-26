@@ -26,7 +26,12 @@ data class Event(
         var dy: Float? = null,
         var delay: Long? = null,
         var duration: Long? = null,
-        val target: View? = null
+        var targets: List<View>? = null
 )
 
 data class Task(var title: String = "", var intro: String? = null, val events: MutableList<Event> = arrayListOf())
+
+val Task.targets get() = events.flatMap { it.targets ?: emptyList() }
+fun Task.findEventByView(target: View): Event? {
+    return events.find { it.targets?.contains(target) == true }
+}
