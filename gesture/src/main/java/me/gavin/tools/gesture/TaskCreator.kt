@@ -228,7 +228,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 }
                 .create()
                 .also {
-                    it?.window?.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT)
+                    it.window?.setType(layoutParamsType)
                 }
                 .show()
     }

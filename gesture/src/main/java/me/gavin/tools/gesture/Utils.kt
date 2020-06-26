@@ -10,13 +10,16 @@ import me.gavin.util.getScreenHeight
 import me.gavin.util.getScreenWidth
 import me.gavin.util.getStatusHeight
 
+val layoutParamsType
+    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+    } else {
+        WindowManager.LayoutParams.TYPE_PHONE
+    }
+
 val layoutParams4widget
     get() = WindowManager.LayoutParams().apply {
-        type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
+        type = layoutParamsType
         flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 // WindowManager.LayoutParams.FLAG_FULLSCREEN or
@@ -34,11 +37,7 @@ val layoutParams4widget
 
 val layoutParams4event
     get() = WindowManager.LayoutParams().apply {
-        type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
+        type = layoutParamsType
         flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                 WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN

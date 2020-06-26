@@ -16,8 +16,6 @@ const val EVENT_HOME = "home"
 const val EVENT_RECENT = "recent"
 const val EVENT_NOTIFICATION = "notification"
 
-//sealed class Event(val action: String, val target: View? = null) // 点击/滑动/返回/主页/任务/通知
-//class Click(): Event(EVENT_CLICK)
 data class Event(
         val action: String,
         var x0: Float? = null,

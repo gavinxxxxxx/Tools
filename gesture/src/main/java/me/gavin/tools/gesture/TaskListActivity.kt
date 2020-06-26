@@ -1,5 +1,6 @@
 package me.gavin.tools.gesture
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -52,7 +53,7 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
 
         doIfPermissionGrant4Floating {
             doIfPermissionGrant4Accessibility<TaskAccessibilityService> {
-
+                startService(Intent(this, TaskAccessibilityService::class.java))
             }
         }
     }
