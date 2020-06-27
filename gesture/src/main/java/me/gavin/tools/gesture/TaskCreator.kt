@@ -4,17 +4,19 @@ import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.PointF
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.WindowManager
+import android.view.*
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.content.getSystemService
+import androidx.core.view.GravityCompat
+import androidx.core.view.plusAssign
+import androidx.core.view.setPadding
 import kotlinx.android.synthetic.main.add_dialog.view.*
 import kotlinx.android.synthetic.main.floating_click.view.*
 import me.gavin.ext.layoutParams
 import me.gavin.ext.textTrim
+import me.gavin.util.dp2px
 import me.gavin.util.getScreenHeight
 import me.gavin.util.getScreenWidth
 import kotlin.math.min
@@ -98,6 +100,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 when (it.itemId) {
                     R.id.click -> addClick()
                     R.id.scroll -> addScroll()
+                    R.id.catching -> addCatching()
                     R.id.back -> addKey(EVENT_BACK)
                     R.id.home -> addKey(EVENT_HOME)
                     R.id.recent -> addKey(EVENT_RECENT)
@@ -203,61 +206,37 @@ class TaskCreator(private val service: AccessibilityService) {
         }
     }
 
-    private fun addScroll2() {
-        ScrollView(service, windowManager).apply {
-//            setImageResource(R.drawable.ic_adjust_black_24dp)
-            var target: PointF? = null
+    private fun addCatching() {
+        FrameLayout(service).apply {
+            setBackgroundColor(0x40000000)
+            val events = mutableListOf<MotionEvent>()
             setOnTouchListener { v, event ->
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        if (isInTouch(event.rawX, event.rawY, ePoint.x, ePoint.y, radius)) {
-                            target = ePoint
-                        } else if (isInTouch(event.rawX, event.rawY, sPoint.x, sPoint.y, radius)) {
-                            target = sPoint
-                        } else {
-                            target = null
-                        }
-                    }
-                    MotionEvent.ACTION_MOVE -> {
-                        target?.set(event.rawX, event.rawY)
-                        l = (min(sPoint.x, ePoint.x) - radius).roundToInt()
-                        t = (min(sPoint.y, ePoint.y) - radius).roundToInt()
-//                requestLayout()
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    events.clear()
+                }
+                events += event
+                if (event.action == MotionEvent.ACTION_UP) {
 
-                        layoutParams<WindowManager.LayoutParams>().apply {
-                            x = l
-                            y = t
-                            width = w
-                            height = h
-                            windowManager.updateViewLayout(v, this)
-                            task.findEventByView(v)?.run {
-                                x0 = sPoint.x / ww
-                                y0 = sPoint.y / wh
-                                x1 = ePoint.x / ww
-                                y1 = ePoint.y / wh
-                            }
-                        }
-                    }
                 }
                 false
             }
-            setOnLongClickListener {
-                task.findEventByView(it)?.let { dialogg(it) }
-                true
+            this += ImageView(service).also {
+                it.setImageResource(R.drawable.ic_baseline_close_24)
+                it.setPadding(4f.dp2px())
+                it.layoutParams = FrameLayout.LayoutParams(32f.dp2px(), 32f.dp2px()).apply {
+                    gravity = GravityCompat.END or Gravity.BOTTOM
+                }
+                it.setOnClickListener {
+                    windowManager.removeView(this)
+                }
             }
         }.also {
             layoutParams4event.apply {
-                x = it.l
-                y = it.t
-                width = it.w
-                height = it.h
+                x = 0
+                y = 0
+                width = WindowManager.LayoutParams.MATCH_PARENT
+                height = WindowManager.LayoutParams.MATCH_PARENT
                 windowManager.addView(it, this)
-                task.events += Event(EVENT_SCROLL, targets = listOf(it)).apply {
-                    x0 = it.sPoint.x / ww
-                    y0 = it.sPoint.y / wh
-                    x1 = it.ePoint.x / ww
-                    y1 = it.ePoint.y / wh
-                }
             }
         }
     }

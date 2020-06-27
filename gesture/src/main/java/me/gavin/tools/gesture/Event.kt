@@ -29,6 +29,8 @@ data class Event(
         var targets: List<View>? = null
 )
 
+data class Sub(val x: Float, val y: Float, val duration: Long)
+
 data class Task(var title: String = "", var intro: String? = null, val events: MutableList<Event> = arrayListOf())
 
 val Task.targets get() = events.flatMap { it.targets ?: emptyList() }

@@ -2,32 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/click"
-        android:icon="@mipmap/ic_launcher"
         android:title="点击" />
 
     <item
         android:id="@+id/scroll"
-        android:icon="@mipmap/ic_launcher"
         android:title="滑动" />
 
     <item
+        android:id="@+id/catching"
+        android:title="录制" />
+
+    <item
         android:id="@+id/back"
-        android:icon="@mipmap/ic_launcher"
         android:title="返回" />
 
     <item
         android:id="@+id/home"
-        android:icon="@mipmap/ic_launcher"
         android:title="主页" />
 
     <item
         android:id="@+id/recent"
-        android:icon="@mipmap/ic_launcher"
         android:title="最近任务" />
 
     <item
         android:id="@+id/notification"
-        android:icon="@mipmap/ic_launcher"
         android:title="打开通知" />
 
 </menu>

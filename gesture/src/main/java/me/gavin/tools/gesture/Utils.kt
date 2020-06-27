@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.graphics.PixelFormat
 import android.os.Build
 import android.view.Gravity
+import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.core.view.GravityCompat
 import me.gavin.util.getScreenHeight
@@ -66,4 +67,8 @@ fun AccessibilityService.execute(e: Event) {
         EVENT_RECENT -> recent()
         EVENT_NOTIFICATION -> notification()
     }
+}
+
+fun List<MotionEvent>.toAction() {
+
 }
