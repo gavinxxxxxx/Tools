@@ -37,7 +37,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 if (it.isSelected) {
                     it.isSelected = false
                     arrayOf(ivAdd, ivRemove, ivClose).forEach { it.isEnabled = true }
-                    task.targets.forEach { v ->
+                    task.targets.filter { it !is Untouchable }.forEach { v ->
                         v.layoutParams<WindowManager.LayoutParams>().let {
                             it.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
@@ -48,7 +48,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 } else if (task.events.isNotEmpty()) {
                     it.isSelected = true
                     arrayOf(ivAdd, ivRemove, ivClose).forEach { it.isEnabled = false }
-                    task.targets.forEach { v ->
+                    task.targets.filter { it !is Untouchable }.forEach { v ->
                         v.layoutParams<WindowManager.LayoutParams>().let {
                             it.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
@@ -143,6 +143,67 @@ class TaskCreator(private val service: AccessibilityService) {
     }
 
     private fun addScroll() {
+        (0..1).map { i ->
+            ImageView(service).apply {
+                setImageResource(R.drawable.ic_adjust_black_24dp)
+                setOnTouchListener { v, event ->
+                    v.layoutParams<WindowManager.LayoutParams>().apply {
+                        x = event.rawX.roundToInt() - v.measuredWidth / 2
+                        y = event.rawY.roundToInt() - v.measuredHeight / 2
+                        windowManager.updateViewLayout(v, this)
+                        task.findEventByView(v)?.run {
+                            if (i == 0) {
+                                x0 = event.rawX / ww
+                                y0 = event.rawY / wh
+                            } else if (i == 1) {
+                                x1 = event.rawX / ww
+                                y1 = event.rawY / wh
+                            }
+                            targets?.find { it is PathView }?.let {
+                                (it as PathView).notifyDataChange(x0!! to y0!!, x1!! to y1!!)
+                            }
+                        }
+                    }
+                    false
+                }
+                setOnLongClickListener {
+                    task.findEventByView(it)?.let { dialogg(it) }
+                    true
+                }
+            }.let {
+                it.measure(View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED),
+                        View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED))
+                layoutParams4event.run {
+                    x = getScreenWidth() / 2 - it.measuredWidth / 2
+                    y = getScreenHeight() / 4 * (i + 1)
+                    windowManager.addView(it, this)
+                    it to PointF(x + it.measuredWidth * 0.5f, y + it.measuredHeight * 0.5f)
+                }
+            }
+        }.also {
+            val pathView = PathView(service)
+            layoutParams4event.run {
+                x = 0
+                y = 0
+                width = WindowManager.LayoutParams.MATCH_PARENT
+                height = WindowManager.LayoutParams.MATCH_PARENT
+                flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                windowManager.addView(pathView, this)
+            }
+            val targets = it.mapTo(ArrayList<View>()) { it.first }.also { it += pathView }
+            task.events += Event(EVENT_SCROLL, targets = targets).apply {
+                x0 = it.first().second.x / ww
+                y0 = it.first().second.y / wh
+                x1 = it.last().second.x / ww
+                y1 = it.last().second.y / wh
+                pathView.notifyDataChange(x0!! to y0!!, x1!! to y1!!)
+            }
+        }
+    }
+
+    private fun addScroll2() {
         ScrollView(service, windowManager).apply {
 //            setImageResource(R.drawable.ic_adjust_black_24dp)
             var target: PointF? = null
