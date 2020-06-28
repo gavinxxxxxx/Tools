@@ -3,6 +3,7 @@ package me.gavin.tools.gesture
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.graphics.Point
 import android.graphics.PointF
 import android.view.*
 import android.widget.FrameLayout
@@ -17,16 +18,16 @@ import kotlinx.android.synthetic.main.floating_click.view.*
 import me.gavin.ext.layoutParams
 import me.gavin.ext.textTrim
 import me.gavin.util.dp2px
-import me.gavin.util.getScreenHeight
 import me.gavin.util.getScreenWidth
-import kotlin.math.min
 import kotlin.math.roundToInt
 
 @SuppressLint("ClickableViewAccessibility")
 class TaskCreator(private val service: AccessibilityService) {
 
-    private val ww = getScreenWidth()
-    private val wh = getScreenHeight()
+//    private val ww = getScreenWidth()
+//    private val wh = getScreenHeight()
+    private val ww by lazy { Point().also { windowManager.defaultDisplay.getRealSize(it) }.x }
+    private val wh by lazy { Point().also { windowManager.defaultDisplay.getRealSize(it) }.y }
 
     private val task = Task()
     private var taskExecutor: TaskExecutor? = null
@@ -70,8 +71,8 @@ class TaskCreator(private val service: AccessibilityService) {
             ivDrag.setOnTouchListener { _, e ->
                 if (e.action == MotionEvent.ACTION_MOVE) {
                     layoutParams<WindowManager.LayoutParams>().let {
-                        it.x = (it.x + e.rawX - last.x).roundToInt().coerceIn(0, getScreenWidth() - width)
-                        it.y = (it.y + e.rawY - last.y).roundToInt().coerceIn(0, getScreenHeight() - height)
+                        it.x = (it.x + e.rawX - last.x).roundToInt().coerceIn(0, ww - width)
+                        it.y = (it.y + e.rawY - last.y).roundToInt().coerceIn(0, wh - height)
                         windowManager.updateViewLayout(this, it)
                     }
                 }
@@ -134,8 +135,8 @@ class TaskCreator(private val service: AccessibilityService) {
             it.measure(View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED),
                     View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED))
             layoutParams4event.apply {
-                x = getScreenWidth() / 2 - it.measuredWidth / 2
-                y = getScreenHeight() / 2 - it.measuredHeight / 2
+                x = ww / 2 - it.measuredWidth / 2
+                y = wh / 2 - it.measuredHeight / 2
                 windowManager.addView(it, this)
                 task.events += Event(EVENT_CLICK, targets = listOf(it)).apply {
                     x0 = (x + it.measuredWidth / 2).toFloat() / ww
@@ -177,8 +178,8 @@ class TaskCreator(private val service: AccessibilityService) {
                 it.measure(View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED),
                         View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED))
                 layoutParams4event.run {
-                    x = getScreenWidth() / 2 - it.measuredWidth / 2
-                    y = getScreenHeight() / 4 * (i + 1)
+                    x = ww / 2 - it.measuredWidth / 2
+                    y = wh / 4 * (i + 1)
                     windowManager.addView(it, this)
                     it to PointF(x + it.measuredWidth * 0.5f, y + it.measuredHeight * 0.5f)
                 }

@@ -3,13 +3,14 @@ package me.gavin.tools.gesture
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.graphics.Path
-import me.gavin.util.getScreenHeight
+import me.gavin.util.getScreenRealHeight
 import me.gavin.util.getScreenWidth
+import me.gavin.util.print
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
 private val w get() = getScreenWidth()
-private val h get() = getScreenHeight()
+private val h get() = getScreenRealHeight()
 
 private fun getVal(v: Float, d: Float, s: Int): Float {
     return ((s * (v - abs(d))).roundToInt()..(s * (v + abs(d))).roundToInt()).random().toFloat()
@@ -56,14 +57,14 @@ fun AccessibilityService.scroll(x0: Float, y0: Float, x1: Float, y1: Float, dx: 
                 dispatchGesture(it, object : AccessibilityService.GestureResultCallback() {
                     override fun onCancelled(gestureDescription: GestureDescription) {
                         super.onCancelled(gestureDescription)
-                        println("GestureResultCallback - onCancelled - ")
+                        println("GestureResultCallback - onCancelled")
                     }
 
                     override fun onCompleted(gestureDescription: GestureDescription) {
                         super.onCompleted(gestureDescription)
-                        println("GestureResultCallback - onCompleted - ")
+                        println("GestureResultCallback - onCompleted")
                     }
-                }, null)
+                }, null).let { "dispatchGesture - $it".print() }
             }
 }
 

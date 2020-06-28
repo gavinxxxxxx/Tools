@@ -2,9 +2,11 @@ package me.gavin.tools.gesture
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.view.View
+import org.jetbrains.anko.withAlpha
 
 interface Untouchable
 
@@ -20,7 +22,7 @@ class PathView(context: Context) : View(context), Untouchable {
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(0x40000000)
+        canvas.drawColor(Color.RED.withAlpha(0x40))
 
         points.forEach {
             canvas.drawPoint(it.x, it.y, paint)
