@@ -4,10 +4,10 @@ import android.accessibilityservice.AccessibilityService
 import android.graphics.PixelFormat
 import android.os.Build
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.WindowManager
 import androidx.core.view.GravityCompat
 import me.gavin.util.getScreenHeight
+import me.gavin.util.getScreenRealHeight
 import me.gavin.util.getScreenWidth
 import me.gavin.util.getStatusHeight
 
@@ -60,8 +60,10 @@ val layoutParams4event
 
 fun AccessibilityService.execute(e: Event) {
     when (e.action) {
-        EVENT_CLICK -> tap(e.x0!!, e.y0!!, e.dx ?: 0.01f, e.dy ?: 0.01f, e.duration ?: 50)
-        EVENT_SCROLL -> scroll(e.x0!!, e.y0!!, e.x1!!, e.y1!!, e.dx ?: 0.01f, e.dy ?: 0.01f, e.duration ?: 500)
+//        EVENT_CLICK -> tap(e.x0!!, e.y0!!, e.dx ?: 0.01f, e.dy ?: 0.01f, e.duration ?: 50)
+//        EVENT_SCROLL -> scroll(e.x0!!, e.y0!!, e.x1!!, e.y1!!, e.dx ?: 0.01f, e.dy ?: 0.01f, e.duration ?: 500)
+        EVENT_TOUCH -> touch(e.parts, e.dx ?: 0.01f, e.dy ?: 0.01f, e.duration ?: 500)
+        EVENT_CATCH -> touch(e.parts, e.dx ?: 0.01f, e.dy ?: 0.01f, e.duration ?: 500)
         EVENT_BACK -> back()
         EVENT_HOME -> home()
         EVENT_RECENT -> recent()
@@ -69,6 +71,5 @@ fun AccessibilityService.execute(e: Event) {
     }
 }
 
-fun List<MotionEvent>.toAction() {
-
-}
+val w get() = getScreenWidth()
+val h get() = getScreenRealHeight()

@@ -121,8 +121,8 @@ class TaskCreator(private val service: AccessibilityService) {
                     y = event.rawY.roundToInt() - v.measuredHeight / 2
                     windowManager.updateViewLayout(v, this)
                     task.findEventByView(v)?.run {
-                        x0 = event.rawX / ww
-                        y0 = event.rawY / wh
+                        parts.first().x = event.rawX / ww
+                        parts.first().y = event.rawY / wh
                     }
                 }
                 false
@@ -138,9 +138,8 @@ class TaskCreator(private val service: AccessibilityService) {
                 x = ww / 2 - it.measuredWidth / 2
                 y = wh / 2 - it.measuredHeight / 2
                 windowManager.addView(it, this)
-                task.events += Event(EVENT_CLICK, targets = listOf(it)).apply {
-                    x0 = (x + it.measuredWidth / 2).toFloat() / ww
-                    y0 = (y + it.measuredHeight / 2).toFloat() / wh
+                task.events += Event(EVENT_TOUCH, targets = listOf(it)).apply {
+                    parts.add(Part((x + it.measuredWidth / 2).toFloat() / ww, (y + it.measuredHeight / 2).toFloat() / wh))
                 }
             }
         }
@@ -156,15 +155,10 @@ class TaskCreator(private val service: AccessibilityService) {
                         y = event.rawY.roundToInt() - v.measuredHeight / 2
                         windowManager.updateViewLayout(v, this)
                         task.findEventByView(v)?.run {
-                            if (i == 0) {
-                                x0 = event.rawX / ww
-                                y0 = event.rawY / wh
-                            } else if (i == 1) {
-                                x1 = event.rawX / ww
-                                y1 = event.rawY / wh
-                            }
+                            parts[i].x = event.rawX / ww
+                            parts[i].y = event.rawY / wh
                             targets?.find { it is PathView }?.let {
-                                (it as PathView).notifyDataChange(x0!! to y0!!, x1!! to y1!!)
+                                (it as PathView).notifyDataChange(parts)
                             }
                         }
                     }
@@ -197,12 +191,10 @@ class TaskCreator(private val service: AccessibilityService) {
                 windowManager.addView(pathView, this)
             }
             val targets = it.mapTo(ArrayList<View>()) { it.first }.also { it += pathView }
-            task.events += Event(EVENT_SCROLL, targets = targets).apply {
-                x0 = it.first().second.x / ww
-                y0 = it.first().second.y / wh
-                x1 = it.last().second.x / ww
-                y1 = it.last().second.y / wh
-                pathView.notifyDataChange(x0!! to y0!!, x1!! to y1!!)
+            task.events += Event(EVENT_TOUCH, targets = targets).apply {
+                parts.add(Part(it.first().second.x / ww, it.first().second.y / wh))
+                parts.add(Part(it.last().second.x / ww, it.last().second.y / wh))
+                pathView.notifyDataChange(parts)
             }
         }
     }
@@ -210,14 +202,17 @@ class TaskCreator(private val service: AccessibilityService) {
     private fun addCatching() {
         FrameLayout(service).apply {
             setBackgroundColor(0x40000000)
-            val events = mutableListOf<MotionEvent>()
+            var paths: MutableList<Part>? = null
             setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
-                    events.clear()
+                    paths = mutableListOf()
                 }
-                events += event
+                paths!!.add(Part(event.rawX / w, event.rawY / h, event.eventTime - event.downTime))
                 if (event.action == MotionEvent.ACTION_UP) {
+                    task.events += Event(EVENT_CATCH, parts = paths!!, targets = null).apply {
 
+                    }
+                    println("task - ${task.events.firstOrNull()?.parts?.size} - $task")
                 }
                 false
             }

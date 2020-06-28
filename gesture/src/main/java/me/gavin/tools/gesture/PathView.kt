@@ -15,9 +15,9 @@ class PathView(context: Context) : View(context), Untouchable {
     private val points = mutableListOf<PointF>()
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    fun notifyDataChange(vararg ps: Pair<Float, Float>) {
+    fun notifyDataChange(list: List<Part>) {
         points.clear()
-        points.addAll(ps.map { PointF(it.first, it.second) })
+        points.addAll(list.map { PointF(it.x, it.y) })
         invalidate()
     }
 
