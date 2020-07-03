@@ -1,7 +1,6 @@
 package me.gavin.tools.gesture
 
 import android.view.View
-import kotlin.collections.ArrayList
 
 /**
  * action: click/scroll/back/home/recent/notification
@@ -10,8 +9,8 @@ import kotlin.collections.ArrayList
  * delay
  * duration
  */
-//const val EVENT_CLICK = "click"
-//const val EVENT_SCROLL = "scroll"
+// const val EVENT_CLICK = "click"
+// const val EVENT_SCROLL = "scroll"
 const val EVENT_TOUCH = "touch"
 const val EVENT_CATCH = "catch"
 const val EVENT_BACK = "back"

@@ -22,16 +22,13 @@ class PathView(context: Context) : View(context), Untouchable {
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(Color.RED.withAlpha(0x40))
-
         points.forEach {
             canvas.drawPoint(it.x, it.y, paint)
         }
 
         points.map { listOf(it.x * width, it.y * height) }
-                .flatMap {
-                    it
-                }.let {
+                .flatten()
+                .let {
                     canvas.drawLines(it.toFloatArray(), paint)
                 }
     }

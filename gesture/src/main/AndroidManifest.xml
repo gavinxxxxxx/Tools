@@ -24,13 +24,6 @@
 
         <activity android:name=".SettingsActivity" />
 
-        <activity android:name=".TestActivity" >
-            <intent-filter>
-                <action android:name="android.intent.action.TEST" />
-                <category android:name="android.intent.category.TEST" />
-            </intent-filter>
-        </activity>
-
         <service
             android:name=".TaskAccessibilityService"
             android:enabled="true"

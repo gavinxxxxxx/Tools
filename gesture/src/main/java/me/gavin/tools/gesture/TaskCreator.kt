@@ -14,7 +14,7 @@ import androidx.core.view.GravityCompat
 import androidx.core.view.plusAssign
 import androidx.core.view.setPadding
 import kotlinx.android.synthetic.main.add_dialog.view.*
-import kotlinx.android.synthetic.main.floating_click.view.*
+import kotlinx.android.synthetic.main.floating_widget.view.*
 import me.gavin.ext.layoutParams
 import me.gavin.ext.textTrim
 import me.gavin.util.dp2px
@@ -34,7 +34,7 @@ class TaskCreator(private val service: AccessibilityService) {
 
     private val windowManager by lazy { service.getSystemService<WindowManager>()!! }
     private val widget by lazy {
-        LayoutInflater.from(service).inflate(R.layout.floating_click, null).apply {
+        LayoutInflater.from(service).inflate(R.layout.floating_widget, null).apply {
             ivPlay.setOnClickListener {
                 taskExecutor?.dispose()
                 if (it.isSelected) {

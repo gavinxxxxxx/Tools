@@ -11,58 +11,6 @@ private fun getVal(v: Float, d: Float, s: Int): Float {
     return ((s * (v - abs(d))).roundToInt()..(s * (v + abs(d))).roundToInt()).random().toFloat()
 }
 
-fun AccessibilityService.tap(x: Float, y: Float, dx: Float = 0f, dy: Float = 0f, duration: Long = 50) {
-    val rx = getVal(x, dx, w)
-    val ry = getVal(y, dy, h)
-    "tap - $rx - $ry".let(::println)
-    val path = Path().apply { moveTo(rx, ry) }
-    GestureDescription.Builder()
-            .addStroke(GestureDescription.StrokeDescription(path, 0, duration))
-            .build()
-            .let {
-                dispatchGesture(it, null, null)
-//                dispatchGesture(it, object : AccessibilityService.GestureResultCallback() {
-//                    override fun onCancelled(gestureDescription: GestureDescription) {
-//                        super.onCancelled(gestureDescription)
-//                        println("GestureResultCallback - onCancelled - ")
-//                    }
-//
-//                    override fun onCompleted(gestureDescription: GestureDescription) {
-//                        super.onCompleted(gestureDescription)
-//                        println("GestureResultCallback - onCompleted - ")
-//                    }
-//                }, null)
-            }
-}
-
-fun AccessibilityService.scroll(x0: Float, y0: Float, x1: Float, y1: Float, dx: Float = 0f, dy: Float = 0f, duration: Long = 500) {
-    val path = Path().apply {
-        val rx0 = getVal(x0, dx, w)
-        val ry0 = getVal(y0, dy, h)
-        moveTo(rx0, ry0)
-        val rx1 = getVal(x1, dx, w)
-        val ry1 = getVal(y1, dy, h)
-        "scroll - ($rx0,$ry0) -> ($rx1,$ry1)".let(::println)
-        lineTo(rx1, ry1)
-    }
-    GestureDescription.Builder()
-            .addStroke(GestureDescription.StrokeDescription(path, 0, duration))
-            .build()
-            .let {
-                dispatchGesture(it, object : AccessibilityService.GestureResultCallback() {
-                    override fun onCancelled(gestureDescription: GestureDescription) {
-                        super.onCancelled(gestureDescription)
-                        println("GestureResultCallback - onCancelled")
-                    }
-
-                    override fun onCompleted(gestureDescription: GestureDescription) {
-                        super.onCompleted(gestureDescription)
-                        println("GestureResultCallback - onCompleted")
-                    }
-                }, null).let { "dispatchGesture - $it".print() }
-            }
-}
-
 fun AccessibilityService.touch(list: List<Part>, dx: Float = 0f, dy: Float = 0f, duration: Long = 500) {
     if (list.isEmpty()) return
     val path = Path().apply {
@@ -80,7 +28,6 @@ fun AccessibilityService.touch(list: List<Part>, dx: Float = 0f, dy: Float = 0f,
         .let {
             dispatchGesture(it, object : AccessibilityService.GestureResultCallback() {
                 override fun onCancelled(gestureDescription: GestureDescription) {
-                    super.onCancelled(gestureDescription)
                     println("GestureResultCallback - onCancelled")
                 }
 
