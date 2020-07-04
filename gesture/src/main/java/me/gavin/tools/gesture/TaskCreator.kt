@@ -3,7 +3,6 @@ package me.gavin.tools.gesture
 import android.accessibilityservice.AccessibilityService
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.graphics.Point
 import android.graphics.PointF
 import android.view.*
 import android.widget.FrameLayout
@@ -18,16 +17,10 @@ import kotlinx.android.synthetic.main.floating_widget.view.*
 import me.gavin.ext.layoutParams
 import me.gavin.ext.textTrim
 import me.gavin.util.dp2px
-import me.gavin.util.getScreenWidth
 import kotlin.math.roundToInt
 
 @SuppressLint("ClickableViewAccessibility")
 class TaskCreator(private val service: AccessibilityService) {
-
-//    private val ww = getScreenWidth()
-//    private val wh = getScreenHeight()
-    private val ww by lazy { Point().also { windowManager.defaultDisplay.getRealSize(it) }.x }
-    private val wh by lazy { Point().also { windowManager.defaultDisplay.getRealSize(it) }.y }
 
     private val task = Task()
     private var taskExecutor: TaskExecutor? = null
@@ -61,7 +54,6 @@ class TaskCreator(private val service: AccessibilityService) {
                     }
                     taskExecutor = TaskExecutor(service, task).also { it.execute() }
                 }
-//                taskExecutor.toggle()
             }
             ivAdd.setOnClickListener { selectEventType(it) }
             ivRemove.setOnClickListener { removeEvent() }
@@ -71,8 +63,8 @@ class TaskCreator(private val service: AccessibilityService) {
             ivDrag.setOnTouchListener { _, e ->
                 if (e.action == MotionEvent.ACTION_MOVE) {
                     layoutParams<WindowManager.LayoutParams>().let {
-                        it.x = (it.x + e.rawX - last.x).roundToInt().coerceIn(0, ww - width)
-                        it.y = (it.y + e.rawY - last.y).roundToInt().coerceIn(0, wh - height)
+                        it.x = (it.x + e.rawX - last.x).roundToInt().coerceIn(0, Ext.w - width)
+                        it.y = (it.y + e.rawY - last.y).roundToInt().coerceIn(0, Ext.h - height)
                         windowManager.updateViewLayout(this, it)
                     }
                 }
@@ -99,9 +91,8 @@ class TaskCreator(private val service: AccessibilityService) {
             menuInflater.inflate(R.menu.event_type, menu)
             setOnMenuItemClickListener {
                 when (it.itemId) {
-                    R.id.click -> addClick()
-                    R.id.scroll -> addScroll()
-                    R.id.catching -> addCatching()
+                    R.id.touch -> addCatch(false)
+                    R.id.touchMulti -> addCatch(true)
                     R.id.back -> addKey(EVENT_BACK)
                     R.id.home -> addKey(EVENT_HOME)
                     R.id.recent -> addKey(EVENT_RECENT)
@@ -112,89 +103,27 @@ class TaskCreator(private val service: AccessibilityService) {
         }.show()
     }
 
-    private fun addClick() {
-        ImageView(service).apply {
-            setImageResource(R.drawable.ic_adjust_black_24dp)
-            setOnTouchListener { v, event ->
-                v.layoutParams<WindowManager.LayoutParams>().apply {
-                    x = event.rawX.roundToInt() - v.measuredWidth / 2
-                    y = event.rawY.roundToInt() - v.measuredHeight / 2
-                    windowManager.updateViewLayout(v, this)
-                    task.findEventByView(v)?.run {
-                        parts.first().x = event.rawX / ww
-                        parts.first().y = event.rawY / wh
+    private fun addCatch(multi: Boolean) {
+        CatchView(service).apply {
+            isMulti = multi
+            callback = {
+                it?.let {
+                    task.events += it
+                    println("task - ${task.events.last().parts.size} - $task")
+                    if (!multi) {
+                        windowManager.removeView(this)
                     }
+                } ?: let {
+                    windowManager.removeView(this)
                 }
-                false
-            }
-            setOnLongClickListener {
-                task.findEventByView(it)?.let { dialogg(it) }
-                true
             }
         }.also {
-            it.measure(View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED),
-                    View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED))
             layoutParams4event.apply {
-                x = ww / 2 - it.measuredWidth / 2
-                y = wh / 2 - it.measuredHeight / 2
-                windowManager.addView(it, this)
-                task.events += Event(EVENT_TOUCH, targets = listOf(it)).apply {
-                    parts.add(Part((x + it.measuredWidth / 2).toFloat() / ww, (y + it.measuredHeight / 2).toFloat() / wh))
-                }
-            }
-        }
-    }
-
-    private fun addScroll() {
-        (0..1).map { i ->
-            ImageView(service).apply {
-                setImageResource(R.drawable.ic_adjust_black_24dp)
-                setOnTouchListener { v, event ->
-                    v.layoutParams<WindowManager.LayoutParams>().apply {
-                        x = event.rawX.roundToInt() - v.measuredWidth / 2
-                        y = event.rawY.roundToInt() - v.measuredHeight / 2
-                        windowManager.updateViewLayout(v, this)
-                        task.findEventByView(v)?.run {
-                            parts[i].x = event.rawX / ww
-                            parts[i].y = event.rawY / wh
-                            targets?.find { it is PathView }?.let {
-                                (it as PathView).notifyDataChange(parts)
-                            }
-                        }
-                    }
-                    false
-                }
-                setOnLongClickListener {
-                    task.findEventByView(it)?.let { dialogg(it) }
-                    true
-                }
-            }.let {
-                it.measure(View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED),
-                        View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED))
-                layoutParams4event.run {
-                    x = ww / 2 - it.measuredWidth / 2
-                    y = wh / 4 * (i + 1)
-                    windowManager.addView(it, this)
-                    it to PointF(x + it.measuredWidth * 0.5f, y + it.measuredHeight * 0.5f)
-                }
-            }
-        }.also {
-            val pathView = PathView(service)
-            layoutParams4event.run {
                 x = 0
                 y = 0
                 width = WindowManager.LayoutParams.MATCH_PARENT
                 height = WindowManager.LayoutParams.MATCH_PARENT
-                flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                windowManager.addView(pathView, this)
-            }
-            val targets = it.mapTo(ArrayList<View>()) { it.first }.also { it += pathView }
-            task.events += Event(EVENT_TOUCH, targets = targets).apply {
-                parts.add(Part(it.first().second.x / ww, it.first().second.y / wh))
-                parts.add(Part(it.last().second.x / ww, it.last().second.y / wh))
-                pathView.notifyDataChange(parts)
+                windowManager.addView(it, this)
             }
         }
     }
@@ -207,7 +136,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     paths = mutableListOf()
                 }
-                paths!!.add(Part(event.rawX / w, event.rawY / h, event.eventTime - event.downTime))
+                paths!!.add(Part(event.rawX / Ext.w, event.rawY / Ext.h, event.eventTime - event.downTime))
                 if (event.action == MotionEvent.ACTION_UP) {
                     task.events += Event(EVENT_CATCH, parts = paths!!, targets = null).apply {
 
@@ -268,3 +197,8 @@ class TaskCreator(private val service: AccessibilityService) {
     }
 
 }
+
+class TaskCreatorAS
+class TaskCreatorRoot
+class TaskExecutorAS
+class TaskExecutorRoot

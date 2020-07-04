@@ -6,10 +6,12 @@ import android.os.Build
 import android.view.Gravity
 import android.view.WindowManager
 import androidx.core.view.GravityCompat
-import me.gavin.util.getScreenHeight
-import me.gavin.util.getScreenRealHeight
-import me.gavin.util.getScreenWidth
-import me.gavin.util.getStatusHeight
+import me.gavin.util.*
+
+object Ext {
+    val w by lazy { getScreenRealWidth() }
+    val h by lazy { getScreenRealHeight() }
+}
 
 val layoutParamsType
     get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -54,8 +56,8 @@ val layoutParams4event
 
 //            x = instanceHolder().get<SharedPreferences>().getInt("quote_floating_x", 300)
 //            y = instanceHolder().get<SharedPreferences>().getInt("quote_floating_y", 300)
-        x = getScreenWidth() / 2
-        y = getScreenHeight() / 2
+        x = Ext.w / 2
+        y = Ext.h / 2
     }
 
 fun AccessibilityService.execute(e: Event) {
@@ -70,6 +72,3 @@ fun AccessibilityService.execute(e: Event) {
         EVENT_NOTIFICATION -> notification()
     }
 }
-
-val w get() = getScreenWidth()
-val h get() = getScreenRealHeight()

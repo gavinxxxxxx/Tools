@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/click"
-        android:title="点击" />
 
     <item
-        android:id="@+id/scroll"
-        android:title="滑动" />
+        android:id="@+id/touch"
+        android:title="触摸" />
 
     <item
-        android:id="@+id/catching"
+        android:id="@+id/touchMulti"
         android:title="录制" />
 
     <item

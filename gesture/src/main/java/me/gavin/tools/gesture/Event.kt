@@ -18,6 +18,8 @@ const val EVENT_HOME = "home"
 const val EVENT_RECENT = "recent"
 const val EVENT_NOTIFICATION = "notification"
 
+data class Task(var title: String = "", var intro: String? = null, val events: MutableList<Event> = arrayListOf())
+
 data class Event(
         val action: String,
         var parts: MutableList<Part> = mutableListOf(),
@@ -29,8 +31,6 @@ data class Event(
 )
 
 data class Part(var x: Float, var y: Float, var time: Long = 0)
-
-data class Task(var title: String = "", var intro: String? = null, val events: MutableList<Event> = arrayListOf())
 
 val Task.targets get() = events.flatMap { it.targets ?: emptyList() }
 fun Task.findEventByView(target: View): Event? {
