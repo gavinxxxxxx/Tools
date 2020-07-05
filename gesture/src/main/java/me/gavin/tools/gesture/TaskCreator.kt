@@ -119,8 +119,6 @@ class TaskCreator(private val service: AccessibilityService) {
             }
         }.also {
             layoutParams4event.apply {
-                x = 0
-                y = 0
                 width = WindowManager.LayoutParams.MATCH_PARENT
                 height = WindowManager.LayoutParams.MATCH_PARENT
                 windowManager.addView(it, this)
@@ -199,8 +197,6 @@ class TaskCreator(private val service: AccessibilityService) {
         }.also {
             val pathView = PathView(service)
             layoutParams4event.run {
-                x = 0
-                y = 0
                 width = WindowManager.LayoutParams.MATCH_PARENT
                 height = WindowManager.LayoutParams.MATCH_PARENT
                 flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or

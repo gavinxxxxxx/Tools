@@ -24,8 +24,7 @@ val layoutParams4widget
     get() = WindowManager.LayoutParams().apply {
         type = layoutParamsType
         flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN // 可覆盖状态栏区域
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES // 可覆盖刘海区域
         }
@@ -41,7 +40,7 @@ val layoutParams4event
         type = layoutParamsType
         flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN // 可覆盖状态栏区域 TODO 可选项
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES // 可覆盖刘海区域
         }
@@ -49,11 +48,6 @@ val layoutParams4event
         width = WindowManager.LayoutParams.WRAP_CONTENT
         height = WindowManager.LayoutParams.WRAP_CONTENT
         gravity = GravityCompat.START or Gravity.TOP
-
-//            x = instanceHolder().get<SharedPreferences>().getInt("quote_floating_x", 300)
-//            y = instanceHolder().get<SharedPreferences>().getInt("quote_floating_y", 300)
-        x = Ext.w / 2
-        y = Ext.h / 2
     }
 
 fun AccessibilityService.execute(e: Event) {
