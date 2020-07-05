@@ -20,7 +20,7 @@ const val EVENT_NOTIFICATION = "notification"
 
 data class Task(var title: String = "", var intro: String? = null, val events: MutableList<Event> = arrayListOf()) {
     val delay = 0L
-    val repeatDelay = 500L
+    val repeatDelay = 0L
 }
 
 data class Event(
@@ -36,9 +36,9 @@ data class Event(
     val isScroll get() = parts.size > 1
     val isScrollMulti get() = parts.size > 2
 
-    val delayExt get() = delay ?: 500L
+    val delayExt get() = delay ?: 100L
     val durationExt get() = duration ?: parts.lastOrNull()?.time ?: durationDefault
-    val durationDefault get() = if (isClick) 50L else if (isScroll) 200L else 500L
+    val durationDefault get() = if (isClick) 50L else if (isScroll) 100L else 500L
 }
 
 data class Part(var x: Float, var y: Float, var time: Long = 0)

@@ -228,8 +228,8 @@ class TaskCreator(private val service: AccessibilityService) {
 
     private fun dialogg(event: Event) {
         val root = LayoutInflater.from(service).inflate(R.layout.add_dialog, null)
-        event.delay?.let { root.etDelay.setText(it.toString()) }
-        event.duration?.let { root.etDuration.setText(it.toString()) }
+        root.etDelay.setText(event.delay?.toString())
+        root.etDuration.setText(event.duration?.toString())
         AlertDialog.Builder(service)
             .setTitle("设置")
             .setView(root)

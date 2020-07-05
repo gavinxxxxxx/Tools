@@ -18,8 +18,7 @@
             android:id="@+id/etDelay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text="500" />
+            android:inputType="number" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,8 +29,7 @@
             android:id="@+id/etDuration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:text="50" />
+            android:inputType="number" />
 
     </LinearLayout>
 

@@ -33,11 +33,7 @@ val layoutParams4widget
         width = WindowManager.LayoutParams.WRAP_CONTENT
         height = WindowManager.LayoutParams.WRAP_CONTENT
         gravity = GravityCompat.START or Gravity.TOP
-
-//            x = instanceHolder().get<SharedPreferences>().getInt("quote_floating_x", 300)
-//            y = instanceHolder().get<SharedPreferences>().getInt("quote_floating_y", 300)
-        x = 0
-        y = getStatusHeight()
+        y = Ext.h / 2
     }
 
 val layoutParams4event
