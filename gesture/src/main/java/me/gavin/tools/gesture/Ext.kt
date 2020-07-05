@@ -32,7 +32,7 @@ val layoutParams4widget
         width = WindowManager.LayoutParams.WRAP_CONTENT
         height = WindowManager.LayoutParams.WRAP_CONTENT
         gravity = GravityCompat.START or Gravity.TOP
-        y = Ext.h / 2
+        y = Ext.h / 4
     }
 
 val layoutParams4event
