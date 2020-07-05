@@ -8,7 +8,6 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
-import me.gavin.util.dp2px
 import me.gavin.util.dp2pxF
 import kotlin.math.abs
 
@@ -31,11 +30,12 @@ class CatchView(context: Context) : View(context) {
 
         if (isMulti) {
             canvas.drawRect(
-                    width - closeSize + closePadding,
-                    height - closeSize + closePadding,
-                    width - closePadding,
-                    height - closePadding,
-                    paint)
+                width - closeSize + closePadding,
+                height - closeSize + closePadding,
+                width - closePadding,
+                height - closePadding,
+                paint
+            )
         }
     }
 
@@ -52,56 +52,58 @@ class CatchView(context: Context) : View(context) {
             }
             MotionEvent.ACTION_MOVE -> {
                 parts += Part(e.x, e.y, e.eventTime - e.downTime)
-                if (abs(e.x - parts.first().x) > touchSlop
-                        || abs(e.y - parts.first().y) > touchSlop) {
+                if (abs(e.x - parts.first().x) > touchSlop || abs(e.y - parts.first().y) > touchSlop) {
                     moved = true
                 }
             }
             MotionEvent.ACTION_UP -> {
                 parts += Part(e.x, e.y, e.eventTime - e.downTime)
-                if (moved) { // 有移动
-                    parts.forEach {
-                        it.x /= Ext.w
-                        it.y /= Ext.h
+                if (isMulti) {
+                    if (moved) {
+                        parts.forEach {
+                            it.x /= Ext.w
+                            it.y /= Ext.h
+                        }
+                        val event = Event(EVENT_TOUCH, parts.toMutableList())
+                        callback.invoke(event)
+                    } else if (parts.first().x < width - closeSize || parts.first().y < height - closeSize) {
+                        val part = Part(
+                            parts.first().x / Ext.w,
+                            parts.first().y / Ext.h,
+                            e.eventTime - e.downTime
+                        )
+                        val event = Event(EVENT_TOUCH, mutableListOf(part))
+                        callback.invoke(event)
+                    } else {
+                        callback.invoke(null)
                     }
-                    val event = Event(EVENT_TOUCH, parts.toMutableList())
-                    callback.invoke(event)
-                } else if (!isMulti // 未移动 & 非连续|非结束
-                        || parts.first().x < width - closeSize || parts.first().y < height - closeSize) {
-                    val part = Part(parts.first().x / Ext.w, parts.first().y / Ext.h, e.eventTime - e.downTime)
-                    val event = Event(EVENT_TOUCH, mutableListOf(part))
-                    callback.invoke(event)
-                } else { // 结束连续
-                    callback.invoke(null)
+                } else {
+                    if (moved) {
+                        val start = Part(
+                            parts.first().x / Ext.w,
+                            parts.first().y / Ext.h,
+                            e.eventTime - e.downTime
+                        )
+                        val end = Part(
+                            parts.last().x / Ext.w,
+                            parts.last().y / Ext.h,
+                            e.eventTime - e.downTime
+                        )
+                        val event = Event(EVENT_TOUCH, mutableListOf(start, end))
+                        callback.invoke(event)
+                    } else {
+                        val part = Part(
+                            parts.first().x / Ext.w,
+                            parts.first().y / Ext.h,
+                            e.eventTime - e.downTime
+                        )
+                        val event = Event(EVENT_TOUCH, mutableListOf(part))
+                        callback.invoke(event)
+                    }
                 }
             }
         }
         return true
     }
-
-//    private inner class SingleTapDetector : GestureDetector.SimpleOnGestureListener() {
-//        override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-//            "onSingleTapConfirmed".print()
-//            callback.invoke(Part(e.rawX, e.rawY))
-//            return true
-//        }
-//
-//        override fun onDoubleTap(e: MotionEvent): Boolean {
-//            "onDoubleTap".print()
-//            callback.invoke(Part(e.rawX, e.rawY))
-//            return true
-//        }
-//
-//        override fun onLongPress(e: MotionEvent) {
-//            "onLongPress".print()
-//            callback.invoke(Part(e.rawX, e.rawY))
-//        }
-//
-//        override fun onScroll(e1: MotionEvent, e2: MotionEvent, dx: Float, dy: Float): Boolean {
-//            "onScroll - $dx - $dy".print()
-////            callback.invoke(Part(e1.rawX, e1.rawY))
-//            return true
-//        }
-//    }
 
 }

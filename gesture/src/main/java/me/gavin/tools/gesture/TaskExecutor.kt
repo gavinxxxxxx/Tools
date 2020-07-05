@@ -22,14 +22,16 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
     fun execute() {
         disposable = task.events
                 .mapIndexed { i, e ->
-                    val delay = e.delay ?: 500L
-                    val duration = task.events.getOrNull(i - 1)?.duration ?: 50L
-                    Observable.just(e).delay(delay + duration, TimeUnit.MILLISECONDS)
+                    val wait = task.events.getOrNull(i - 1)?.durationExt ?: task.delay
+                    val delay = e.delayExt
+                    Observable.just(e).delay(wait + delay, TimeUnit.MILLISECONDS)
                 }
                 .toTypedArray()
                 .let { Observable.concatArray(*it) }
                 .repeatWhen {
-                    it.delay(task.events.lastOrNull()?.duration ?: 500L, TimeUnit.MILLISECONDS)
+                    val wait = task.events.lastOrNull()?.durationExt ?: 500L
+                    val delay = task.repeatDelay
+                    it.delay(wait + delay, TimeUnit.MILLISECONDS)
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {

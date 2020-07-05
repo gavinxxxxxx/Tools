@@ -2,11 +2,9 @@ package me.gavin.tools.gesture
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.view.View
-import org.jetbrains.anko.withAlpha
 
 interface Untouchable
 
@@ -22,15 +20,21 @@ class PathView(context: Context) : View(context), Untouchable {
     }
 
     override fun onDraw(canvas: Canvas) {
+        if (points.size < 2) return
+
         points.forEach {
             canvas.drawPoint(it.x, it.y, paint)
         }
 
-        points.map { listOf(it.x * width, it.y * height) }
-                .flatten()
-                .let {
-                    canvas.drawLines(it.toFloatArray(), paint)
-                }
+        for (i in 0 until points.lastIndex) {
+            canvas.drawLine(
+                points[i].x * width,
+                points[i].y * height,
+                points[i + 1].x * width,
+                points[i + 1].y * height,
+                paint
+            )
+        }
     }
 
 }
