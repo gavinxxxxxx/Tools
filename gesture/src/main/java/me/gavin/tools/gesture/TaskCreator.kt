@@ -73,9 +73,29 @@ class TaskCreator(private val service: AccessibilityService) {
         }
     }
 
+    fun test(task: Task) {
+        taskExecutor?.dispose()
+        taskExecutor = TaskExecutor(service, task).also { it.execute() }
+        widget.ivPlay.isSelected = true
+    }
+
     fun showFloatingWindow() {
         if (widget.parent == null) {
             windowManager.addView(widget, layoutParams4widget)
+        }
+    }
+
+    fun onOrientationChange(isLandscape: Boolean) {
+        task.events.forEach { event ->
+            event.targets?.filter { it !is Untouchable }?.forEach { v ->
+                v.layoutParams<WindowManager.LayoutParams>().let { lp ->
+                    (v.tag as? Part)?.let { part ->
+                        lp.x = (part.x * Ext.w).roundToInt() - v.measuredWidth / 2
+                        lp.y = (part.y * Ext.h).roundToInt() - v.measuredHeight / 2
+                        windowManager.updateViewLayout(v, lp)
+                    }
+                }
+            }
         }
     }
 
@@ -106,10 +126,10 @@ class TaskCreator(private val service: AccessibilityService) {
         CatchView(service).apply {
             isMulti = multi
             callback = {
+                println("callback - $it")
                 it?.let {
                     if (it.isClick) addClick(it)
                     else addScroll(it)
-                    println("task - ${task.events.last().parts.size} - $task")
                     if (!multi) {
                         windowManager.removeView(this)
                     }
@@ -134,8 +154,10 @@ class TaskCreator(private val service: AccessibilityService) {
                     x = e.rawX.roundToInt() - v.measuredWidth / 2
                     y = e.rawY.roundToInt() - v.measuredHeight / 2
                     windowManager.updateViewLayout(v, this)
-                    event.parts.first().x = e.rawX / Ext.w
-                    event.parts.first().y = e.rawY / Ext.h
+                    (tag as? Part)?.let {
+                        it.x = e.rawX / Ext.w
+                        it.y = e.rawY / Ext.h
+                    }
                 }
                 false
             }
@@ -149,8 +171,9 @@ class TaskCreator(private val service: AccessibilityService) {
                 View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED)
             )
             layoutParams4event.apply {
-                x = (event.parts.first().x * Ext.w).roundToInt() - it.measuredWidth / 2
-                y = (event.parts.first().y * Ext.h).roundToInt() - it.measuredHeight / 2
+                val part = event.parts.first().also { part -> it.tag = part }
+                x = (part.x * Ext.w).roundToInt() - it.measuredWidth / 2
+                y = (part.y * Ext.h).roundToInt() - it.measuredHeight / 2
                 windowManager.addView(it, this)
             }
             event.targets = listOf(it)
@@ -167,8 +190,10 @@ class TaskCreator(private val service: AccessibilityService) {
                         x = e.rawX.roundToInt() - v.measuredWidth / 2
                         y = e.rawY.roundToInt() - v.measuredHeight / 2
                         windowManager.updateViewLayout(v, this)
-                        event.parts[i].x = e.rawX / Ext.w
-                        event.parts[i].y = e.rawY / Ext.h
+                        (tag as? Part)?.let {
+                            it.x = e.rawX / Ext.w
+                            it.y = e.rawY / Ext.h
+                        }
                         event.targets?.forEach {
                             (it as? PathView)?.notifyDataChange(event.parts)
                         }
@@ -188,10 +213,10 @@ class TaskCreator(private val service: AccessibilityService) {
                     View.MeasureSpec.makeMeasureSpec(getScreenWidth(), View.MeasureSpec.UNSPECIFIED)
                 )
                 layoutParams4event.run {
-                    x = (event.parts[i].x * Ext.w).roundToInt() - it.measuredWidth / 2
-                    y = (event.parts[i].y * Ext.h).roundToInt() - it.measuredHeight / 2
+                    val part = event.parts[i].also { part -> it.tag = part }
+                    x = (part.x * Ext.w).roundToInt() - it.measuredWidth / 2
+                    y = (part.y * Ext.h).roundToInt() - it.measuredHeight / 2
                     windowManager.addView(it, this)
-//                    it to PointF(x + it.measuredWidth * 0.5f, y + it.measuredHeight * 0.5f)
                 }
             }
         }.also {

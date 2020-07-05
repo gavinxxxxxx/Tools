@@ -1,16 +1,14 @@
 package me.gavin.tools.gesture
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import com.google.gson.Gson
 import me.gavin.base.BindingActivity
 import me.gavin.base.BindingAdapter
 import me.gavin.databinding.WidgetPagerBinding
 import me.gavin.tools.gesture.databinding.TaskActivityBinding
-import me.gavin.util.doIfPermissionGrant4Accessibility
-import me.gavin.util.doIfPermissionGrant4Floating
-import me.gavin.util.isServiceRunning
+import me.gavin.util.*
 import me.gavin.widget.PagerViewModel
 import org.jetbrains.anko.startActivity
 
@@ -18,7 +16,9 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
 
     private val list = mutableListOf<Task>()
     private val adapter by lazy {
-        BindingAdapter(this, list, R.layout.task_item).apply {
+        BindingAdapter(this, list, R.layout.task_item) {
+            RxBus.post(list[it])
+        }.apply {
             footers.add(footerPager)
             binding.recycler.adapter = this
         }
@@ -36,6 +36,13 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
 
     override fun afterCreate(savedInstanceState: Bundle?) {
         binding.fab.setOnClickListener { tryAddTask() }
+
+        list.clear()
+        val test = Gson().fromJson<Task>(jsonTest, Task::class.java)
+        list += test
+        val wzry = Gson().fromJson<Task>(jsonWzry, Task::class.java)
+        list += wzry
+        adapter.notifyDataSetChanged()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -53,7 +60,7 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
 
         doIfPermissionGrant4Floating {
             doIfPermissionGrant4Accessibility<TaskAccessibilityService> {
-                startService(Intent(this, TaskAccessibilityService::class.java))
+                // startService(Intent(this, TaskAccessibilityService::class.java))
             }
         }
     }
@@ -63,3 +70,63 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
     }
 
 }
+
+val jsonTest = """
+        {
+          "title": "测试",
+          "intro": "",
+          "events": [
+            {
+              "action": "touch",
+              "parts": [
+                {
+                  "x": 0.5,
+                  "y": 0.5,
+                  "time": 20
+                }
+              ]
+            }
+          ]
+        }
+    """.trimIndent()
+val jsonWzry = """
+        {
+          "title": "王者荣耀刷金币",
+          "intro": "",
+          "events": [
+            {
+              "action": "touch",
+              "delay": 2000,
+              "parts": [
+                {
+                  "x": 0.7,
+                  "y": 0.81,
+                  "time": 100
+                }
+              ]
+            },
+            {
+              "action": "touch",
+              "delay": 180000,
+              "parts": [
+                {
+                  "x": 0.5,
+                  "y": 0.9,
+                  "time": 100
+                }
+              ]
+            },
+            {
+              "action": "touch",
+              "delay": 2000,
+              "parts": [
+                {
+                  "x": 0.83,
+                  "y": 0.92,
+                  "time": 100
+                }
+              ]
+            }
+          ]
+        }
+    """.trimIndent()

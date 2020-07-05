@@ -9,8 +9,8 @@ import androidx.core.view.GravityCompat
 import me.gavin.util.*
 
 object Ext {
-    val w by lazy { getScreenRealWidth() }
-    val h by lazy { getScreenRealHeight() }
+    val w get() = getScreenRealWidth()
+    val h get() = getScreenRealHeight()
 }
 
 val layoutParamsType

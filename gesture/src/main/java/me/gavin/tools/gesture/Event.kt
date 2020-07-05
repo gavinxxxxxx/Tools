@@ -30,7 +30,7 @@ data class Event(
         var dy: Float? = null,
         var delay: Long? = null,
         var duration: Long? = null,
-        var targets: List<View>? = null
+        @Transient var targets: List<View>? = null
 ) {
     val isClick get() = parts.size == 1
     val isScroll get() = parts.size > 1
@@ -39,11 +39,13 @@ data class Event(
     val delayExt get() = delay ?: 100L
     val durationExt get() = duration ?: parts.lastOrNull()?.time ?: durationDefault
     val durationDefault get() = if (isClick) 50L else if (isScroll) 100L else 500L
+
+    val targetsExt get() = targets ?: emptyList()
 }
 
 data class Part(var x: Float, var y: Float, var time: Long = 0)
 
-val Task.targets get() = events.flatMap { it.targets ?: emptyList() }
+val Task.targets get() = events.flatMap { it.targetsExt }
 fun Task.findEventByView(target: View): Event? {
     return events.find { it.targets?.contains(target) == true }
 }
