@@ -17,7 +17,7 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
     private val list = mutableListOf<Task>()
     private val adapter by lazy {
         BindingAdapter(this, list, R.layout.task_item) {
-            RxBus.post(list[it])
+            RxBus.post(Gson().run { fromJson(toJson(list[it]), Task::class.java) })
         }.apply {
             footers.add(footerPager)
             binding.recycler.adapter = this
@@ -38,9 +38,9 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
         binding.fab.setOnClickListener { tryAddTask() }
 
         list.clear()
-        val test = Gson().fromJson<Task>(jsonTest, Task::class.java)
+        val test = Gson().fromJson(jsonTest, Task::class.java)
         list += test
-        val wzry = Gson().fromJson<Task>(jsonWzry, Task::class.java)
+        val wzry = Gson().fromJson(jsonWzry, Task::class.java)
         list += wzry
         adapter.notifyDataSetChanged()
     }
@@ -80,9 +80,14 @@ val jsonTest = """
               "action": "touch",
               "parts": [
                 {
-                  "x": 0.5,
-                  "y": 0.5,
-                  "time": 20
+                  "x": 0.35,
+                  "y": 0.65,
+                  "time": 0
+                },
+                {
+                  "x": 0.65,
+                  "y": 0.35,
+                  "time": 2020
                 }
               ]
             }

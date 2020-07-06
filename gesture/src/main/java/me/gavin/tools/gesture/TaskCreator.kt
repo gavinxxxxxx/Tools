@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.floating_widget.view.*
 import me.gavin.ext.layoutParams
 import me.gavin.ext.textTrim
 import me.gavin.util.getScreenWidth
+import me.gavin.util.toastError
 import kotlin.math.roundToInt
 
 @SuppressLint("ClickableViewAccessibility")
@@ -73,10 +74,18 @@ class TaskCreator(private val service: AccessibilityService) {
         }
     }
 
-    fun test(task: Task) {
+    fun test(t: Task) {
         taskExecutor?.dispose()
-        taskExecutor = TaskExecutor(service, task).also { it.execute() }
-        widget.ivPlay.isSelected = true
+        widget.ivPlay.isSelected = false
+        task.events.forEach { it.targets?.forEach { windowManager.removeView(it) } }
+        task.events.clear()
+        t.events.forEach {
+            when {
+                it.isClick -> addClick(it)
+                it.isScroll -> addScroll(it)
+                else -> task.events += it
+            }
+        }
     }
 
     fun showFloatingWindow() {
@@ -128,10 +137,14 @@ class TaskCreator(private val service: AccessibilityService) {
             callback = {
                 println("callback - $it")
                 it?.let {
-                    if (it.isClick) addClick(it)
-                    else addScroll(it)
-                    if (!multi) {
-                        windowManager.removeView(this)
+                    if (it.parts.size > 200) {
+                        "路径过于复杂".toastError()
+                    } else {
+                        if (it.isClick) addClick(it)
+                        else addScroll(it)
+                        if (!multi) {
+                            windowManager.removeView(this)
+                        }
                     }
                 } ?: let {
                     windowManager.removeView(this)
