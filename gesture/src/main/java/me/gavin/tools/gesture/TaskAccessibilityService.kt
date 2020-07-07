@@ -4,7 +4,8 @@ import android.accessibilityservice.AccessibilityService
 import android.content.res.Configuration
 import android.view.accessibility.AccessibilityEvent
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.addTo
 import io.reactivex.rxkotlin.subscribeBy
 import me.gavin.util.RxBus
 import me.gavin.util.checkPermission4Floating
@@ -15,22 +16,24 @@ import java.lang.ref.WeakReference
 class TaskAccessibilityService : AccessibilityService() {
 
     private val taskCreator by lazy { TaskCreator(this) }
-    private var dispose: Disposable? = null
+    private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate() {
         super.onCreate()
         App.taskService = WeakReference(this)
-        prepareCreateTask()
+//        prepareCreateTask()
 
-        dispose = RxBus.toObservable<Task>()
+        RxBus.toObservable<StateToggle>()
             .observeOn(AndroidSchedulers.mainThread())
             .doOnNext {
-                taskCreator.test(it)
+                if (it.state) {
+                    taskCreator.showFloatingWindow(it.task)
+                } else {
+                    taskCreator.destroy()
+                }
             }
             .subscribeBy()
-            .also {
-                dispose?.dispose()
-            }
+            .addTo(compositeDisposable)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -38,19 +41,20 @@ class TaskAccessibilityService : AccessibilityService() {
         taskCreator.onOrientationChange(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE)
     }
 
-    private fun prepareCreateTask() {
-        if (checkPermission4Floating()) {
-            taskCreator.showFloatingWindow()
-        } else {
-            "该功能需要悬浮窗权限".toast()
-            stopSelf()
-        }
-    }
+//    private fun prepareCreateTask() {
+//        if (checkPermission4Floating()) {
+//            taskCreator.showFloatingWindow()
+//        } else {
+//            "该功能需要悬浮窗权限".toast()
+//            stopSelf()
+//        }
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
-        App.taskService = null
+        compositeDisposable.dispose()
         taskCreator.destroy()
+        App.taskService = null
     }
 
     override fun onInterrupt() {}
@@ -60,3 +64,5 @@ class TaskAccessibilityService : AccessibilityService() {
     }
 
 }
+
+class StateToggle(val state: Boolean, val task: Task? = null)

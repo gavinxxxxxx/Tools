@@ -57,7 +57,7 @@ class TaskCreator(private val service: AccessibilityService) {
             }
             ivAdd.setOnClickListener { selectEventType(it) }
             ivRemove.setOnClickListener { removeEvent() }
-            ivClose.setOnClickListener { }
+            ivClose.setOnClickListener { destroy() }
 
             val last = PointF()
             ivDrag.setOnTouchListener { _, e ->
@@ -74,23 +74,24 @@ class TaskCreator(private val service: AccessibilityService) {
         }
     }
 
-    fun test(t: Task) {
+    fun showFloatingWindow(task: Task? = null) {
+        if (widget.parent == null) {
+            windowManager.addView(widget, layoutParams4widget)
+        }
+        task?.let { changeTask(it) }
+    }
+
+    private fun changeTask(t: Task) {
         taskExecutor?.dispose()
         widget.ivPlay.isSelected = false
-        task.events.forEach { it.targets?.forEach { windowManager.removeView(it) } }
+        task.targets.forEach { windowManager.removeView(it) }
         task.events.clear()
         t.events.forEach {
             when {
                 it.isClick -> addClick(it)
                 it.isScroll -> addScroll(it)
-                else -> task.events += it
+                else -> task.events.add(it)
             }
-        }
-    }
-
-    fun showFloatingWindow() {
-        if (widget.parent == null) {
-            windowManager.addView(widget, layoutParams4widget)
         }
     }
 
@@ -112,6 +113,7 @@ class TaskCreator(private val service: AccessibilityService) {
         taskExecutor?.dispose()
         windowManager.removeView(widget)
         task.targets.forEach { windowManager.removeView(it) }
+        task.events.clear()
     }
 
     private fun selectEventType(view: View) {
@@ -190,7 +192,7 @@ class TaskCreator(private val service: AccessibilityService) {
                 windowManager.addView(it, this)
             }
             event.targets = listOf(it)
-            task.events += event
+            task.events.add(event)
         }
     }
 
@@ -245,12 +247,12 @@ class TaskCreator(private val service: AccessibilityService) {
             pathView.notifyDataChange(event.parts)
             val targets = it.mapTo(ArrayList<View>()) { it }.also { it += pathView }
             event.targets = targets
-            task.events += event
+            task.events.add(event)
         }
     }
 
     private fun addKey(event: String) {
-        task.events += Event(event, delay = 500, duration = 500)
+        task.events.add(Event(event, delay = 500, duration = 500))
     }
 
     private fun removeEvent() {

@@ -5,6 +5,7 @@ import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import androidx.core.content.getSystemService
+import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -20,6 +21,7 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
     private val points = mutableListOf<View>()
 
     fun execute() {
+        println(Gson().toJson(task))
         disposable = task.events
                 .mapIndexed { i, e ->
                     val wait = task.events.getOrNull(i - 1)?.durationExt ?: task.delay

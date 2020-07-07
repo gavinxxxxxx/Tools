@@ -64,7 +64,7 @@ class CatchView(context: Context) : View(context) {
                             it.x /= Ext.w
                             it.y /= Ext.h
                         }
-                        val event = Event(EVENT_TOUCH, parts.toMutableList())
+                        val event = Event(EVENT_TOUCH).also { it.parts = parts.toMutableList() }
                         callback.invoke(event)
                     } else if (parts.first().x < width - closeSize || parts.first().y < height - closeSize) {
                         val part = Part(
@@ -72,7 +72,7 @@ class CatchView(context: Context) : View(context) {
                             parts.first().y / Ext.h,
                             e.eventTime - e.downTime
                         )
-                        val event = Event(EVENT_TOUCH, mutableListOf(part))
+                        val event = Event(EVENT_TOUCH).also { it.parts = mutableListOf(part) }
                         callback.invoke(event)
                     } else {
                         callback.invoke(null)
@@ -89,7 +89,7 @@ class CatchView(context: Context) : View(context) {
                             parts.last().y / Ext.h,
                             e.eventTime - e.downTime
                         )
-                        val event = Event(EVENT_TOUCH, mutableListOf(start, end))
+                        val event = Event(EVENT_TOUCH).also { it.parts = mutableListOf(start, end) }
                         callback.invoke(event)
                     } else {
                         val part = Part(
@@ -97,7 +97,7 @@ class CatchView(context: Context) : View(context) {
                             parts.first().y / Ext.h,
                             e.eventTime - e.downTime
                         )
-                        val event = Event(EVENT_TOUCH, mutableListOf(part))
+                        val event = Event(EVENT_TOUCH).also { it.parts = mutableListOf(part) }
                         callback.invoke(event)
                     }
                 }

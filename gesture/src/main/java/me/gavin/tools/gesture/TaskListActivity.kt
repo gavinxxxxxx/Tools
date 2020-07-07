@@ -17,7 +17,7 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
     private val list = mutableListOf<Task>()
     private val adapter by lazy {
         BindingAdapter(this, list, R.layout.task_item) {
-            RxBus.post(Gson().run { fromJson(toJson(list[it]), Task::class.java) })
+            tryAddTask(Gson().run { fromJson(toJson(list[it]), Task::class.java) })
         }.apply {
             footers.add(footerPager)
             binding.recycler.adapter = this
@@ -42,6 +42,8 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
         list += test
         val wzry = Gson().fromJson(jsonWzry, Task::class.java)
         list += wzry
+        val zfb = Gson().fromJson(jsonZfbxfq, Task::class.java)
+        list += zfb
         adapter.notifyDataSetChanged()
     }
 
@@ -55,12 +57,13 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
         return true
     }
 
-    private fun tryAddTask() {
+    private fun tryAddTask(task: Task? = null) {
         isServiceRunning<TaskAccessibilityService>().let(::println)
 
         doIfPermissionGrant4Floating {
             doIfPermissionGrant4Accessibility<TaskAccessibilityService> {
                 // startService(Intent(this, TaskAccessibilityService::class.java))
+                RxBus.post(StateToggle(true, task))
             }
         }
     }
@@ -135,3 +138,32 @@ val jsonWzry = """
           ]
         }
     """.trimIndent()
+val jsonZfbxfq = """
+    {
+      "title": "支付宝消费券",
+      "events": [
+        {
+          "action": "touch",
+          "delay": 59,
+          "parts": [
+            {
+              "time": 23,
+              "x": 0.35462964,
+              "y": 0.4212121
+            }
+          ]
+        },
+        {
+          "action": "touch",
+          "delay": 77,
+          "parts": [
+            {
+              "time": 54,
+              "x": 0.61851853,
+              "y": 0.4034632
+            }
+          ]
+        }
+      ]
+    }
+""".trimIndent()
