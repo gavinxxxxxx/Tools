@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import com.google.gson.Gson
+import com.uber.autodispose.autoDisposable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import me.gavin.base.BindingActivity
 import me.gavin.base.BindingAdapter
 import me.gavin.databinding.WidgetPagerBinding
+import me.gavin.net.subscribeE
 import me.gavin.tools.gesture.databinding.TaskActivityBinding
 import me.gavin.util.*
 import me.gavin.widget.PagerViewModel
@@ -17,7 +21,7 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
     private val list = mutableListOf<Task>()
     private val adapter by lazy {
         BindingAdapter(this, list, R.layout.task_item) {
-            tryAddTask(Gson().run { fromJson(toJson(list[it]), Task::class.java) })
+            tryAddTask2(Gson().run { fromJson(toJson(list[it]), Task::class.java) })
         }.apply {
             footers.add(footerPager)
             binding.recycler.adapter = this
@@ -37,14 +41,19 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
     override fun afterCreate(savedInstanceState: Bundle?) {
         binding.fab.setOnClickListener { tryAddTask() }
 
-        list.clear()
-        val test = Gson().fromJson(jsonTest, Task::class.java)
-        list += test
-        val wzry = Gson().fromJson(jsonWzry, Task::class.java)
-        list += wzry
-        val zfb = Gson().fromJson(jsonZfbxfq, Task::class.java)
-        list += zfb
-        adapter.notifyDataSetChanged()
+        AppDatabase.instance
+                .taskDao
+                .listTask()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext {
+                    println(it)
+                    list.clear()
+                    list.addAll(it)
+                    adapter.notifyDataSetChanged()
+                }
+                .autoDisposable(scopeProvider)
+                .subscribeE()
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -55,6 +64,24 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         startActivity<SettingsActivity>()
         return true
+    }
+
+    private fun tryAddTask2(task: Task) {
+        AppDatabase.instance
+                .taskDao
+                .listEventByTaskId(task.id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSuccess {
+                    it.map {
+                        it.event.apply { parts = it.parts.toMutableList() }
+                    }.let {
+                        task.events.addAll(it)
+                        tryAddTask(task)
+                    }
+                }
+                .autoDisposable(scopeProvider)
+                .subscribeE()
     }
 
     private fun tryAddTask(task: Task? = null) {
