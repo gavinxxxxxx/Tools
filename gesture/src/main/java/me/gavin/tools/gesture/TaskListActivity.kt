@@ -171,10 +171,10 @@ val jsonZfbxfq = """
       "events": [
         {
           "action": "touch",
-          "delay": 59,
+          "delay": 29,
           "parts": [
             {
-              "time": 23,
+              "time": 57,
               "x": 0.35462964,
               "y": 0.4212121
             }
@@ -182,10 +182,10 @@ val jsonZfbxfq = """
         },
         {
           "action": "touch",
-          "delay": 77,
+          "delay": 37,
           "parts": [
             {
-              "time": 54,
+              "time": 52,
               "x": 0.61851853,
               "y": 0.4034632
             }
