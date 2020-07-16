@@ -11,7 +11,7 @@ import me.gavin.util.log
 import java.util.concurrent.Executors
 
 
-@Database(entities = [Task::class, Event::class, Part::class], version = 9)
+@Database(entities = [Task::class, Event::class, Part::class], version = 10)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val taskDao: TaskDao

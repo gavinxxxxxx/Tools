@@ -51,9 +51,11 @@ class CatchView(context: Context) : View(context) {
                 moved = false
             }
             MotionEvent.ACTION_MOVE -> {
-                parts += Part(e.x, e.y, e.eventTime - e.downTime)
-                if (abs(e.x - parts.first().x) > touchSlop || abs(e.y - parts.first().y) > touchSlop) {
+                if (!moved && (abs(e.x - parts.first().x) > touchSlop || abs(e.y - parts.first().y) > touchSlop)) {
                     moved = true
+                }
+                if (moved) {
+                    parts += Part(e.x, e.y, e.eventTime - e.downTime)
                 }
             }
             MotionEvent.ACTION_UP -> {
