@@ -14,9 +14,6 @@ private fun getVal(v: Float, d: Float, s: Int): Float {
 fun AccessibilityService.touch(list: List<Part>, dx: Float = 0f, dy: Float = 0f, duration: Long = 500) {
     if (list.isEmpty()) return
     val path = Path().apply {
-//        moveTo(100f, 100f)
-//        rCubicTo(0f, 55f, 45f, 100f, 100f, 100f)
-//        rCubicTo(55f, 0f, 100f, -45f, 100f, -100f)
         moveTo(getVal(list.first().x, dx, Ext.w), getVal(list.first().y, dy, Ext.h))
         for (i in 1..list.lastIndex) {
             lineTo(getVal(list[i].x, dx, Ext.w), getVal(list[i].y, dy, Ext.h))
@@ -37,20 +34,4 @@ fun AccessibilityService.touch(list: List<Part>, dx: Float = 0f, dy: Float = 0f,
                 }
             }, null).let { "dispatchGesture - $it".print() }
         }
-}
-
-fun AccessibilityService.back() {
-    performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK)
-}
-
-fun AccessibilityService.home() {
-    performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME)
-}
-
-fun AccessibilityService.recent() {
-    performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS)
-}
-
-fun AccessibilityService.notification() {
-    performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
 }

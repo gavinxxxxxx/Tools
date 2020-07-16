@@ -1,7 +1,6 @@
 package me.gavin.tools.gesture
 
 import android.accessibilityservice.AccessibilityService
-import android.os.Looper
 import android.view.View
 import android.view.WindowManager
 import androidx.core.content.getSystemService
@@ -37,13 +36,6 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
                 }
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext {
-                    println("$it - ${Looper.myLooper() == Looper.getMainLooper()}")
-//                    tap(0.65f, 0.75f, 0.15f, 0.2f)
-//                    scroll(0.65f, 0.75f, 0.15f, 0.2f)
-
-//                    service.tap((v.layoutParams<WindowManager.LayoutParams>().x.toFloat() + v.width / 2) / getScreenWidth(),
-//                            (v.layoutParams<WindowManager.LayoutParams>().y.toFloat() + v.height / 2) / getScreenHeight(), 0f, 0f)
-
                     service.execute(it)
                 }
                 .subscribeBy()

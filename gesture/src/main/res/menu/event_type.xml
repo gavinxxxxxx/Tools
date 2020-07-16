@@ -22,7 +22,27 @@
         android:title="最近任务" />
 
     <item
-        android:id="@+id/notification"
+        android:id="@+id/notifications"
         android:title="打开通知" />
+
+    <item
+        android:id="@+id/quickSettings"
+        android:title="打开快捷设置" />
+
+    <item
+        android:id="@+id/powerDialog"
+        android:title="长按电源键" />
+
+    <item
+        android:id="@+id/splitScreen"
+        android:title="分屏" />
+
+    <item
+        android:id="@+id/lockScreen"
+        android:title="锁屏 (9.0)" />
+
+    <item
+        android:id="@+id/screenshot"
+        android:title="截屏 (9.0)" />
 
 </menu>

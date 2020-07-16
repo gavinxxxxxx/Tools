@@ -12,15 +12,7 @@ import io.reactivex.Single
  * delay
  * duration
  */
-// const val EVENT_CLICK = "click"
-// const val EVENT_SCROLL = "scroll"
-const val EVENT_TOUCH = "touch"
-const val EVENT_CATCH = "catch"
-const val EVENT_BACK = "back"
-const val EVENT_HOME = "home"
-const val EVENT_RECENT = "recent"
-const val EVENT_NOTIFICATION = "notification"
-
+const val ACTION_CATCH = 0
 
 @Entity
 data class Task(
@@ -41,7 +33,7 @@ data class Task(
             onDelete = ForeignKey.CASCADE)]
 )
 data class Event(
-        val action: String,
+        val action: Int,
         var dx: Float? = null,
         var dy: Float? = null,
         var delay: Long? = null,

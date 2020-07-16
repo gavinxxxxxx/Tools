@@ -107,7 +107,7 @@ val jsonTest = """
           "intro": "",
           "events": [
             {
-              "action": "touch",
+              "action": 0,
               "parts": [
                 {
                   "x": 0.35,
@@ -130,7 +130,7 @@ val jsonWzry = """
           "intro": "",
           "events": [
             {
-              "action": "touch",
+              "action": 0,
               "delay": 2000,
               "parts": [
                 {
@@ -141,7 +141,7 @@ val jsonWzry = """
               ]
             },
             {
-              "action": "touch",
+              "action": 0,
               "delay": 180000,
               "parts": [
                 {
@@ -152,7 +152,7 @@ val jsonWzry = """
               ]
             },
             {
-              "action": "touch",
+              "action": 0,
               "delay": 2000,
               "parts": [
                 {
@@ -170,7 +170,7 @@ val jsonZfbxfq = """
       "title": "支付宝消费券",
       "events": [
         {
-          "action": "touch",
+          "action": 0,
           "delay": 29,
           "parts": [
             {
@@ -181,7 +181,7 @@ val jsonZfbxfq = """
           ]
         },
         {
-          "action": "touch",
+          "action": 0,
           "delay": 37,
           "parts": [
             {

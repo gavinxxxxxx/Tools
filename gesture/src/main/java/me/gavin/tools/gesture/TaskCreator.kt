@@ -123,10 +123,15 @@ class TaskCreator(private val service: AccessibilityService) {
                 when (it.itemId) {
                     R.id.touch -> addCatch(false)
                     R.id.touchMulti -> addCatch(true)
-                    R.id.back -> addKey(EVENT_BACK)
-                    R.id.home -> addKey(EVENT_HOME)
-                    R.id.recent -> addKey(EVENT_RECENT)
-                    R.id.notification -> addKey(EVENT_NOTIFICATION)
+                    R.id.back -> addKey(AccessibilityService.GLOBAL_ACTION_BACK)
+                    R.id.home -> addKey(AccessibilityService.GLOBAL_ACTION_HOME)
+                    R.id.recent -> addKey(AccessibilityService.GLOBAL_ACTION_RECENTS)
+                    R.id.notifications -> addKey(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS)
+                    R.id.quickSettings -> addKey(AccessibilityService.GLOBAL_ACTION_QUICK_SETTINGS)
+                    R.id.powerDialog -> addKey(AccessibilityService.GLOBAL_ACTION_POWER_DIALOG, duration = 5000)
+                    R.id.splitScreen -> addKey(AccessibilityService.GLOBAL_ACTION_TOGGLE_SPLIT_SCREEN)
+                    R.id.lockScreen -> addKey(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN, duration = 5000)
+                    R.id.screenshot -> addKey(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT)
                 }
                 true
             }
@@ -251,8 +256,8 @@ class TaskCreator(private val service: AccessibilityService) {
         }
     }
 
-    private fun addKey(event: String) {
-        task.events.add(Event(event, delay = 500, duration = 500))
+    private fun addKey(action: Int, delay: Long = 500, duration: Long = 500) {
+        task.events.add(Event(action, delay = delay, duration = duration))
     }
 
     private fun removeEvent() {

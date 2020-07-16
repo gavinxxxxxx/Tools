@@ -53,11 +53,7 @@ val layoutParams4event
 
 fun AccessibilityService.execute(e: Event) {
     when (e.action) {
-        EVENT_TOUCH -> touch(e.parts, e.dx ?: 0.01f, e.dy ?: 0.01f, e.durationExt)
-        EVENT_CATCH -> touch(e.parts, e.dx ?: 0.01f, e.dy ?: 0.01f, e.durationExt)
-        EVENT_BACK -> back()
-        EVENT_HOME -> home()
-        EVENT_RECENT -> recent()
-        EVENT_NOTIFICATION -> notification()
+        ACTION_CATCH -> touch(e.parts, e.dx ?: 0.01f, e.dy ?: 0.01f, e.durationExt)
+        else -> performGlobalAction(e.action)
     }
 }
