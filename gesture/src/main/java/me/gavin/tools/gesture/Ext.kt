@@ -50,10 +50,3 @@ val layoutParams4event
         height = WindowManager.LayoutParams.WRAP_CONTENT
         gravity = GravityCompat.START or Gravity.TOP
     }
-
-fun AccessibilityService.execute(e: Event) {
-    when (e.action) {
-        ACTION_CATCH -> dispatchGestureV26(e.parts, e.dx ?: 0.01f, e.dy ?: 0.01f, e.durationExt)
-        else -> performGlobalAction(e.action)
-    }
-}

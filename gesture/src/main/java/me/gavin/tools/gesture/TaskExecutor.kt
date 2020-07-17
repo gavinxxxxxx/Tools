@@ -6,9 +6,7 @@ import android.view.WindowManager
 import androidx.core.content.getSystemService
 import com.google.gson.Gson
 import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.rxkotlin.subscribeBy
 import java.util.concurrent.TimeUnit
 
 class TaskExecutor(private val service: AccessibilityService, private val task: Task) : Disposable {
@@ -21,24 +19,23 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
 
     fun execute() {
         println(Gson().toJson(task))
-        disposable = task.events
-                .mapIndexed { i, e ->
-                    val wait = task.events.getOrNull(i - 1)?.durationExt ?: task.delay
-                    val delay = e.delayExt
-                    Observable.just(e).delay(wait + delay, TimeUnit.MILLISECONDS)
+        disposable = Observable.timer(task.delay, TimeUnit.MILLISECONDS)
+                .flatMap {
+                    task.events.map {
+                        it.toObservable(service)
+                    }.toTypedArray().let {
+                        Observable.concatArray(*it)
+                    }
                 }
-                .toTypedArray()
-                .let { Observable.concatArray(*it) }
                 .repeatWhen {
-                    val wait = task.events.lastOrNull()?.durationExt ?: 500L
-                    val delay = task.repeatDelay
-                    it.delay(wait + delay, TimeUnit.MILLISECONDS)
+                    it.delay(task.repeatDelay, TimeUnit.MILLISECONDS)
                 }
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext {
-                    service.execute(it)
-                }
-                .subscribeBy()
+                .retry()
+                .subscribe({
+
+                }, {
+                    it.printStackTrace()
+                })
                 .also { disposable?.dispose() }
     }
 

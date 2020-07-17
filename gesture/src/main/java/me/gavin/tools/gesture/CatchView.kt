@@ -8,7 +8,9 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
+import androidx.core.content.ContextCompat
 import me.gavin.util.dp2pxF
+import org.jetbrains.anko.withAlpha
 import kotlin.math.abs
 
 @SuppressLint("ClickableViewAccessibility")
@@ -26,7 +28,7 @@ class CatchView(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawColor(0x40000000)
+        canvas.drawColor(ContextCompat.getColor(context, R.color.colorAccent).withAlpha(0x40))
 
         if (isMulti) {
             canvas.drawRect(

@@ -144,15 +144,15 @@ class TaskCreator(private val service: AccessibilityService) {
             callback = {
                 println("callback - $it")
                 it?.let {
-                    if (it.parts.size > 200) {
-                        "路径过于复杂".toastError()
-                    } else {
+//                    if (it.parts.size > 200) {
+//                        "路径过于复杂".toastError()
+//                    } else {
                         if (it.isClick) addClick(it)
                         else addScroll(it)
                         if (!multi) {
                             windowManager.removeView(this)
                         }
-                    }
+//                    }
                 } ?: let {
                     windowManager.removeView(this)
                 }
