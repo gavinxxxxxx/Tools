@@ -144,15 +144,11 @@ class TaskCreator(private val service: AccessibilityService) {
             callback = {
                 println("callback - $it")
                 it?.let {
-//                    if (it.parts.size > 200) {
-//                        "路径过于复杂".toastError()
-//                    } else {
-                        if (it.isClick) addClick(it)
-                        else addScroll(it)
-                        if (!multi) {
-                            windowManager.removeView(this)
-                        }
-//                    }
+                    if (it.isClick) addClick(it)
+                    else addScroll(it)
+                    if (!multi) {
+                        windowManager.removeView(this)
+                    }
                 } ?: let {
                     windowManager.removeView(this)
                 }
@@ -205,20 +201,22 @@ class TaskCreator(private val service: AccessibilityService) {
         listOf(0, event.parts.lastIndex).map { i ->
             ImageView(service).apply {
                 setImageResource(R.drawable.ic_adjust_black_24dp)
-                setOnTouchListener { v, e ->
-                    v.layoutParams<WindowManager.LayoutParams>().apply {
-                        x = e.rawX.roundToInt() - v.measuredWidth / 2
-                        y = e.rawY.roundToInt() - v.measuredHeight / 2
-                        windowManager.updateViewLayout(v, this)
-                        (tag as? Part)?.let {
-                            it.x = e.rawX / Ext.w
-                            it.y = e.rawY / Ext.h
+                if (!event.isScrollMulti) {
+                    setOnTouchListener { v, e ->
+                        v.layoutParams<WindowManager.LayoutParams>().apply {
+                            x = e.rawX.roundToInt() - v.measuredWidth / 2
+                            y = e.rawY.roundToInt() - v.measuredHeight / 2
+                            windowManager.updateViewLayout(v, this)
+                            (tag as? Part)?.let {
+                                it.x = e.rawX / Ext.w
+                                it.y = e.rawY / Ext.h
+                            }
+                            event.targets?.forEach {
+                                (it as? PathView)?.notifyDataChange(event.parts)
+                            }
                         }
-                        event.targets?.forEach {
-                            (it as? PathView)?.notifyDataChange(event.parts)
-                        }
+                        false
                     }
-                    false
                 }
                 setOnLongClickListener {
                     dialogg(event)

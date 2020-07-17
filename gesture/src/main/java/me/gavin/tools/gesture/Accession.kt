@@ -11,6 +11,7 @@ import me.gavin.util.print
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 private fun getVal(v: Float, d: Float, s: Int): Float {
     return ((s * (v - abs(d))).roundToInt()..(s * (v + abs(d))).roundToInt()).random().toFloat()
@@ -53,6 +54,7 @@ fun Event.event2observable(service: AccessibilityService): Observable<*> {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun Event.event2observableV26(service: AccessibilityService):Observable<*> {
+    val timeScale = duration?.let { it * 1f / parts.last().time } ?: 1f
     return (1..parts.lastIndex).map { i ->
         Path().apply {
             moveTo(getVal(parts[i - 1].x, 0f, Ext.w), getVal(parts[i - 1].y, 0f, Ext.h))
@@ -61,12 +63,13 @@ fun Event.event2observableV26(service: AccessibilityService):Observable<*> {
     }.let { paths ->
         var strokeDescription: GestureDescription.StrokeDescription? = null
         paths.mapIndexed { i, path ->
+            val duration = ((parts[i + 1].time - parts[i].time) * timeScale).roundToLong()
             strokeDescription?.let {
-                it.continueStroke(path, 0, parts[i + 1].time - parts[i].time, i < paths.lastIndex).also {
+                it.continueStroke(path, 0, duration, i < paths.lastIndex).also {
                     strokeDescription = it
                 }
             } ?: let {
-                GestureDescription.StrokeDescription(path, 0, parts[i + 1].time - parts[i].time, i < parts.lastIndex - 1).also {
+                GestureDescription.StrokeDescription(path, 0, duration, i < parts.lastIndex - 1).also {
                     strokeDescription = it
                 }
             }
@@ -94,6 +97,7 @@ fun GestureDescription.gd2Observable(service: AccessibilityService) = Observable
             emitter.onComplete()
         }
     }, null).let {
+        // if (!it) emitter.onError(IllegalStateException())
         "dispatchGesture - $it - ${Looper.myLooper() == Looper.getMainLooper()}".print()
     }
 }/*.subscribeOn(AndroidSchedulers.mainThread())*/

@@ -11,7 +11,7 @@ import me.gavin.util.log
 import java.util.concurrent.Executors
 
 
-@Database(entities = [Task::class, Event::class, Part::class], version = 10)
+@Database(entities = [Task::class, Event::class, Part::class], version = 12)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val taskDao: TaskDao
@@ -25,7 +25,11 @@ abstract class AppDatabase : RoomDatabase() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             "onCreate - ".log()
-
+                            ioThread { initData() }
+                        }
+                        override fun onDestructiveMigration(db: SupportSQLiteDatabase) {
+                            super.onDestructiveMigration(db)
+                            "onDestructiveMigration - ".log()
                             ioThread { initData() }
                         }
                     })
