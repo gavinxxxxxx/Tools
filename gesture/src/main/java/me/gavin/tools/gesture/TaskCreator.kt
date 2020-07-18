@@ -12,9 +12,13 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.content.getSystemService
 import kotlinx.android.synthetic.main.add_dialog.view.*
+import kotlinx.android.synthetic.main.add_dialog.view.etDelay
 import kotlinx.android.synthetic.main.floating_widget.view.*
+import kotlinx.android.synthetic.main.task_dialog.view.*
 import me.gavin.ext.layoutParams
 import me.gavin.ext.textTrim
+import me.gavin.ext.toIntOr0
+import me.gavin.ext.toLongOr0
 import me.gavin.util.getScreenWidth
 import me.gavin.util.toastError
 import kotlin.math.roundToInt
@@ -57,6 +61,7 @@ class TaskCreator(private val service: AccessibilityService) {
             }
             ivAdd.setOnClickListener { selectEventType(it) }
             ivRemove.setOnClickListener { removeEvent() }
+            ivSave.setOnClickListener { saveTask() }
             ivClose.setOnClickListener { destroy() }
 
             val last = PointF()
@@ -74,11 +79,17 @@ class TaskCreator(private val service: AccessibilityService) {
         }
     }
 
-    fun showFloatingWindow(task: Task? = null) {
+    fun showFloatingWindow(t: Task? = null) {
         if (widget.parent == null) {
             windowManager.addView(widget, layoutParams4widget)
         }
-        task?.let { changeTask(it) }
+        t?.let { changeTask(it) } ?: let {
+            task.id = 0L
+            task.title = ""
+            task.intro = ""
+            task.delay = 0L
+            task.repeatDelay = 0L
+        }
     }
 
     private fun changeTask(t: Task) {
@@ -93,6 +104,11 @@ class TaskCreator(private val service: AccessibilityService) {
                 else -> task.events.add(it)
             }
         }
+        task.id = t.id
+        task.title = t.title
+        task.intro = t.intro
+        task.delay = t.delay
+        task.repeatDelay = t.repeatDelay
     }
 
     fun onOrientationChange(isLandscape: Boolean) {
@@ -282,6 +298,60 @@ class TaskCreator(private val service: AccessibilityService) {
                 it.window?.setType(layoutParamsType)
             }
             .show()
+    }
+
+    private fun saveTask() {
+        val root = LayoutInflater.from(service).inflate(R.layout.task_dialog, null)
+        root.etTitle.setText(task.title)
+        root.etIntro.setText(task.intro)
+        root.etDelay.setText(task.delay.toString())
+        root.etTimes.setText(task.repeat.toString())
+        root.etDelay2.setText(task.repeatDelay.toString())
+        AlertDialog.Builder(service)
+                .setTitle("设置")
+                .setView(root)
+                .setNeutralButton("另存") { _, _ ->
+                    task.id = 0L
+                    task.title = root.etTitle.textTrim
+                    task.intro = root.etIntro.textTrim
+                    task.delay = root.etDelay.toLongOr0
+                    task.repeat = root.etTimes.toIntOr0
+                    task.repeatDelay = root.etDelay2.toLongOr0
+                    saveTask2()
+                }
+                .setNegativeButton("取消", null)
+                .setPositiveButton("确定") { _, _ ->
+                    task.title = root.etTitle.textTrim
+                    task.intro = root.etIntro.textTrim
+                    task.delay = root.etDelay.toLongOr0
+                    task.repeat = root.etTimes.toIntOr0
+                    task.repeatDelay = root.etDelay2.toLongOr0
+                    saveTask2()
+                }
+                .create()
+                .also {
+                    it.window?.setType(layoutParamsType)
+                }
+                .show()
+    }
+
+    private fun saveTask2() {
+        ioThread {
+            if (task.id != 0L) {
+                AppDatabase.instance.taskDao.delTask(listOf(task))
+            }
+            val list = listOf(task)
+            AppDatabase.instance.taskDao.insertTask(list).forEachIndexed { i, taskId ->
+                val events = list[i].events
+                events.forEach { it.taskId = taskId }
+                AppDatabase.instance.taskDao.insertEvent(events).forEachIndexed { ei, eventId ->
+                    val parts = events[ei].parts
+                    parts.forEach { it.eventId = eventId }
+                    AppDatabase.instance.taskDao.insertPart(parts)
+                }
+                task.id = taskId
+            }
+        }
     }
 
 }

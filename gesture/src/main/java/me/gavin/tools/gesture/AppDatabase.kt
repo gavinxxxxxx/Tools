@@ -11,14 +11,14 @@ import me.gavin.util.log
 import java.util.concurrent.Executors
 
 
-@Database(entities = [Task::class, Event::class, Part::class], version = 12)
+@Database(entities = [Task::class, Event::class, Part::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val taskDao: TaskDao
 
     companion object {
         val instance by lazy {
-            Room.databaseBuilder(Gavin.app, AppDatabase::class.java, "reader.db")
+            Room.databaseBuilder(Gavin.app, AppDatabase::class.java, "gesture.db")
                     .fallbackToDestructiveMigration()
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .addCallback(object : RoomDatabase.Callback() {
@@ -49,11 +49,10 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private fun initData() {
-            val test = Gson().fromJson(jsonTest, Task::class.java)
             val wzry = Gson().fromJson(jsonWzry, Task::class.java)
             val zfb = Gson().fromJson(jsonZfbxfq, Task::class.java)
 
-            val list = listOf(test, wzry, zfb)
+            val list = listOf(wzry/*, zfb*/)
             instance.taskDao.insertTask(list).forEachIndexed { i, taskId ->
                 val events = list[i].events
                 events.forEach { it.taskId = taskId }

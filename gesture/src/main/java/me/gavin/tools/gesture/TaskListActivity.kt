@@ -3,6 +3,9 @@ package me.gavin.tools.gesture
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.uber.autodispose.autoDisposable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -12,11 +15,15 @@ import me.gavin.base.BindingAdapter
 import me.gavin.databinding.WidgetPagerBinding
 import me.gavin.net.subscribeE
 import me.gavin.tools.gesture.databinding.TaskActivityBinding
-import me.gavin.util.*
+import me.gavin.util.RxBus
+import me.gavin.util.doIfPermissionGrant4Accessibility
+import me.gavin.util.doIfPermissionGrant4Floating
+import me.gavin.util.isServiceRunning
 import me.gavin.widget.PagerViewModel
+import me.jessyan.autosize.internal.CancelAdapt
 import org.jetbrains.anko.startActivity
 
-class TaskListActivity : BindingActivity<TaskActivityBinding>() {
+class TaskListActivity : BindingActivity<TaskActivityBinding>(), CancelAdapt {
 
     private val list = mutableListOf<Task>()
     private val adapter by lazy {
@@ -40,6 +47,48 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
 
     override fun afterCreate(savedInstanceState: Bundle?) {
         binding.fab.setOnClickListener { tryAddTask() }
+
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.START or ItemTouchHelper.END) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder) = false
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                viewHolder.adapterPosition.let {
+                    val t = list[it]
+
+                    AppDatabase.instance
+                            .taskDao
+                            .listEventByTaskId(t.id)
+                            .doOnSuccess {
+                                AppDatabase.instance.taskDao.delTask(listOf(t))
+                            }
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .doOnSuccess {
+                                it.map {
+                                    it.event.apply { parts = it.parts.toMutableList() }
+                                }.let {
+                                    Snackbar.make(binding.recycler, "已删除", Snackbar.LENGTH_LONG)
+                                            .setAction("撤销") {
+                                                ioThread {
+                                                    val list = listOf(t)
+                                                    AppDatabase.instance.taskDao.insertTask(list).forEachIndexed { i, taskId ->
+                                                        val events = list[i].events
+                                                        events.forEach { it.taskId = taskId }
+                                                        AppDatabase.instance.taskDao.insertEvent(events).forEachIndexed { ei, eventId ->
+                                                            val parts = events[ei].parts
+                                                            parts.forEach { it.eventId = eventId }
+                                                            AppDatabase.instance.taskDao.insertPart(parts)
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            .show()
+                                }
+                            }
+                            .autoDisposable(scopeProvider)
+                            .subscribeE()
+                }
+            }
+        }).attachToRecyclerView(binding.recycler)
 
         AppDatabase.instance
                 .taskDao
@@ -101,33 +150,10 @@ class TaskListActivity : BindingActivity<TaskActivityBinding>() {
 
 }
 
-val jsonTest = """
-        {
-          "title": "测试",
-          "intro": "",
-          "events": [
-            {
-              "action": 0,
-              "parts": [
-                {
-                  "x": 0.35,
-                  "y": 0.65,
-                  "time": 0
-                },
-                {
-                  "x": 0.65,
-                  "y": 0.35,
-                  "time": 2020
-                }
-              ]
-            }
-          ]
-        }
-    """.trimIndent()
 val jsonWzry = """
         {
-          "title": "王者荣耀刷金币",
-          "intro": "",
+          "title": "某耀刷金币（示例）",
+          "intro": "闯关模式 三分钟循环一次",
           "events": [
             {
               "action": 0,
@@ -167,7 +193,7 @@ val jsonWzry = """
     """.trimIndent()
 val jsonZfbxfq = """
     {
-      "title": "支付宝消费券",
+      "title": "某宝消费券",
       "events": [
         {
           "action": 0,

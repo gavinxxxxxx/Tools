@@ -16,11 +16,13 @@ const val ACTION_CATCH = 0
 
 @Entity
 data class Task(
-        @PrimaryKey(autoGenerate = true) val id: Long = 0L,
+        @PrimaryKey(autoGenerate = true) var id: Long = 0L,
         var title: String = "",
         var intro: String? = null,
         var delay: Long = 0L,
-        var repeatDelay: Long = 0L) {
+        var repeat: Int = 0,
+        var repeatDelay: Long = 0L,
+        var time: Long = System.currentTimeMillis()) {
 
     @Ignore
     var events: MutableList<Event> = arrayListOf()

@@ -35,6 +35,16 @@
         tools:ignore="ContentDescription" />
 
     <ImageView
+        android:id="@+id/ivSave"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:padding="4dp"
+        android:tint="#000"
+        android:src="@drawable/ic_outline_near_me_24"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
         android:id="@+id/ivClose"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
