@@ -1,41 +1,59 @@
-<PreferenceScreen
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-            android:icon="@null"
-            android:title="@string/messages_header">
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="任务">
+
+        <Preference
+            android:key="task_delay"
+            android:summary="0 ~ 500"
+            android:title="任务延迟(ms)" />
 
         <EditTextPreference
-                android:icon="@null"
-                android:key="signature"
-                android:title="@string/signature_title"/>
+            android:key="taskRepeatTimes"
+            android:summary="0"
+            android:title="循环次数(0代表无限循环)" />
 
-        <ListPreference
-                android:key="reply"
-                android:icon="@null"
-                android:title="@string/reply_title"
-                android:entries="@array/reply_entries"
-                android:entryValues="@array/reply_values"
-                android:defaultValue="reply"/>
+        <Preference
+            android:key="task_repeat_delay"
+            android:summary="500 ~ 1000"
+            android:title="循环延迟(ms)" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-            android:icon="@null"
-            android:title="@string/sync_header">
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="事件">
+
+        <Preference
+            android:key="event_delay"
+            android:summary="100 ~ 200"
+            android:title="事件延迟(ms)" />
+
+        <Preference
+            android:key="event_diff"
+            android:summary="10"
+            android:title="位置偏移半径(px)" />
 
         <SwitchPreference
-                android:icon="@null"
-                android:key="sync"
-                android:title="@string/sync_title"/>
+            android:dependency="event_diff"
+            android:key="event_diff_scroll_state"
+            android:summaryOff="双点手势不偏移"
+            android:summaryOn="双点手势偏移"
+            android:title="双点手势偏移" />
 
         <SwitchPreference
-                android:icon="@null"
-                android:key="attachment"
-                android:title="@string/attachment_title"
-                android:summaryOn="@string/attachment_summary_on"
-                android:summaryOff="@string/attachment_summary_off"
-                android:dependency="sync"/>
+            android:dependency="event_diff_scroll_state"
+            android:key="event_diff_scroll_diff"
+            android:summaryOff="控制点将向不同方向偏移不同距离"
+            android:summaryOn="控制点将向同一个方向偏移相同距离"
+            android:title="双点手势偏移同步" />
+
+        <SwitchPreference
+            android:key="event_diff_catch"
+            android:summaryOff="多点手势不偏移"
+            android:summaryOn="多点手势将整体向同一方向偏移"
+            android:title="多点手势偏移" />
 
     </PreferenceCategory>
 
