@@ -1,59 +1,60 @@
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        android:icon="@drawable/ic_baseline_settings_24"
-        android:title="任务">
-
-        <Preference
-            android:key="task_delay"
-            android:summary="0 ~ 500"
-            android:title="任务延迟(ms)" />
+        app:icon="@drawable/ic_baseline_settings_24"
+        app:title="任务">
 
         <EditTextPreference
-            android:key="taskRepeatTimes"
-            android:summary="0"
-            android:title="循环次数(0代表无限循环)" />
+            app:dialogLayout="@layout/preference_edit_text"
+            app:key="taskRepeatTimes"
+            app:summary="0"
+            app:title="循环次数(0代表无限循环)" />
 
         <Preference
-            android:key="task_repeat_delay"
-            android:summary="500 ~ 1000"
-            android:title="循环延迟(ms)" />
+            app:key="task_repeat_delay"
+            app:summary="500 ~ 1000"
+            app:title="循环延迟(ms)" />
 
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:icon="@drawable/ic_baseline_settings_24"
-        android:title="事件">
+        app:icon="@drawable/ic_baseline_settings_24"
+        app:title="事件">
 
         <Preference
-            android:key="event_delay"
-            android:summary="100 ~ 200"
-            android:title="事件延迟(ms)" />
+            app:key="eventDelay"
+            app:summary="100 ~ 200"
+            app:title="事件延迟(ms)" />
 
         <Preference
-            android:key="event_diff"
-            android:summary="10"
-            android:title="位置偏移半径(px)" />
+            app:key="eventDurationOff"
+            app:summary="1"
+            app:title="事件持续时间偏移倍数" />
 
-        <SwitchPreference
-            android:dependency="event_diff"
-            android:key="event_diff_scroll_state"
-            android:summaryOff="双点手势不偏移"
-            android:summaryOn="双点手势偏移"
-            android:title="双点手势偏移" />
+        <Preference
+            app:key="event_diff"
+            app:summary="10"
+            app:title="位置偏移半径(px)" />
 
-        <SwitchPreference
-            android:dependency="event_diff_scroll_state"
-            android:key="event_diff_scroll_diff"
-            android:summaryOff="控制点将向不同方向偏移不同距离"
-            android:summaryOn="控制点将向同一个方向偏移相同距离"
-            android:title="双点手势偏移同步" />
+        <SwitchPreferenceCompat
+            app:dependency="event_diff"
+            app:key="event_diff_scroll_state"
+            app:summaryOff="双点手势不偏移"
+            app:summaryOn="双点手势偏移"
+            app:title="双点手势偏移" />
 
-        <SwitchPreference
-            android:key="event_diff_catch"
-            android:summaryOff="多点手势不偏移"
-            android:summaryOn="多点手势将整体向同一方向偏移"
-            android:title="多点手势偏移" />
+        <SwitchPreferenceCompat
+            app:dependency="event_diff_scroll_state"
+            app:key="event_diff_scroll_diff"
+            app:summaryOff="控制点将向不同方向偏移不同距离"
+            app:summaryOn="控制点将向同一个方向偏移相同距离"
+            app:title="双点手势偏移同步" />
+
+        <SwitchPreferenceCompat
+            app:key="event_diff_catch"
+            app:summaryOff="多点手势不偏移"
+            app:summaryOn="多点手势将整体向同一方向偏移"
+            app:title="多点手势偏移" />
 
     </PreferenceCategory>
 

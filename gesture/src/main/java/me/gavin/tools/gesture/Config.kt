@@ -7,46 +7,41 @@ object Config {
 
     private val sp by lazy { PreferenceManager.getDefaultSharedPreferences(App.app) }
 
-    var taskDelay = sp.getLong("taskDelay", 0)
+    var taskRepeatTimes = sp.getString("taskRepeatTimes", "0")?.toIntOrNull() ?: 0
         set(value) {
             field = value
-            sp.edit { putLong("taskDelay", value) }
+            sp.edit { putString("taskRepeatTimes", value.toString()) }
         }
-    var taskDelayZ = sp.getLong("taskDelayZ", 0)
+    var taskRepeatDelay = sp.getString("taskRepeatDelay", "0")?.toLongOrNull() ?: 0
         set(value) {
             field = value
-            sp.edit { putLong("taskDelayZ", value) }
+            sp.edit { putString("taskRepeatDelay", value.toString()) }
         }
-    var taskRepeatTimes = sp.getInt("taskRepeatTimes", 0)
-//        set(value) {
-//            field = value
-//            sp.edit { putInt("taskRepeatTimes", value) }
-//        }
-    var taskRepeatDelay = sp.getLong("taskRepeatDelay", 0)
+    var taskRepeatOff = (sp.getString("taskRepeatOff", "0")?.toLongOrNull() ?: 0).coerceAtLeast(taskRepeatDelay)
         set(value) {
             field = value
-            sp.edit { putLong("taskRepeatDelay", value) }
-        }
-    var taskRepeatDelayZ = sp.getLong("taskRepeatDelayZ", 0)
-        set(value) {
-            field = value
-            sp.edit { putLong("taskRepeatDelayZ", value) }
+            sp.edit { putString("taskRepeatOff", value.toString()) }
         }
 
-    var eventDelay = sp.getLong("eventDelay", 0)
+    var eventDelay = sp.getString("eventDelay", "0")?.toLongOrNull() ?: 0
         set(value) {
             field = value
-            sp.edit { putLong("eventDelay", value) }
+            sp.edit { putString("eventDelay", value.toString()) }
         }
-    var eventDelayZ = sp.getLong("eventDelayZ", 0)
+    var eventDelayOff = (sp.getString("eventDelayOff", "0")?.toLongOrNull() ?: 0).coerceAtLeast(taskRepeatDelay)
         set(value) {
             field = value
-            sp.edit { putLong("eventDelayZ", value) }
+            sp.edit { putString("eventDelayOff", value.toString()) }
         }
-    var eventOffsetLimit = sp.getInt("eventOffsetLimit", 0)
+    var eventDurationOff = (sp.getString("eventDelayOff", "0")?.toFloatOrNull() ?: 1f).coerceAtLeast(1f)
         set(value) {
             field = value
-            sp.edit { putInt("eventOffsetLimit", value) }
+            sp.edit { putString("eventDelayOff", value.toString()) }
+        }
+    var eventLocationOff = sp.getString("eventLocationOff", "0")?.toIntOrNull() ?: 0
+        set(value) {
+            field = value
+            sp.edit { putString("eventLocationOff", value.toString()) }
         }
     var event2Offset2 = sp.getBoolean("event2Offset2", true)
         set(value) {

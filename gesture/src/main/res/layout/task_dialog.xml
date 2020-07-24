@@ -34,17 +34,6 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="执行延迟(ms)" />
-
-        <EditText
-            android:id="@+id/etDelay"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="循环次数(0代表无限循环)" />
 
         <EditText
@@ -59,7 +48,7 @@
             android:text="循环延迟(ms)" />
 
         <EditText
-            android:id="@+id/etDelay2"
+            android:id="@+id/etDelay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number" />

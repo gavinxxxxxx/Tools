@@ -19,7 +19,7 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
 
     fun execute() {
         println(Gson().toJson(task))
-        disposable = Observable.timer(task.delay, TimeUnit.MILLISECONDS)
+        disposable = Observable.timer(500, TimeUnit.MILLISECONDS)
                 .flatMap {
                     task.events.map {
                         it.toObservable(service)
@@ -30,7 +30,6 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
                 .repeatWhen {
                     it.delay(task.repeatDelay, TimeUnit.MILLISECONDS)
                 }
-                .retry()
                 .subscribe({
 
                 }, {

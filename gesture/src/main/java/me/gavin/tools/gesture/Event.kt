@@ -4,6 +4,7 @@ import android.view.View
 import androidx.room.*
 import io.reactivex.Flowable
 import io.reactivex.Single
+import kotlin.math.roundToLong
 
 /**
  * action: click/scroll/back/home/recent/notification
@@ -19,7 +20,6 @@ data class Task(
         @PrimaryKey(autoGenerate = true) var id: Long = 0L,
         var title: String = "",
         var intro: String? = null,
-        var delay: Long = 0L,
         var repeat: Int = 0,
         var repeatDelay: Long = 0L,
         var time: Long = System.currentTimeMillis()) {
@@ -39,6 +39,7 @@ data class Event(
         var dx: Float? = null,
         var dy: Float? = null,
         var delay: Long? = null,
+        var delayOff: Long? = null,
         var duration: Long? = null,
         @PrimaryKey(autoGenerate = true) var id: Long = 0L,
         @ColumnInfo(index = true) var taskId: Long = 0L) {
@@ -53,8 +54,14 @@ data class Event(
     val isScroll get() = parts.size > 1
     val isScrollMulti get() = parts.size > 2
 
-    val delayExt get() = delay ?: 100L
-    val durationExt get() = duration ?: parts.lastOrNull()?.time ?: durationDefault
+    val delayExt: Long
+        get() = (delay ?: Config.eventDelay)
+                .let { it..it + (delayOff ?: Config.eventDelayOff) }
+                .random()
+    val durationExt: Long
+        get() = (duration ?: parts.lastOrNull()?.time ?: durationDefault)
+                .let { it..(it * Config.eventDurationOff).roundToLong() }
+                .random()
     val durationDefault get() = if (isClick) 50L else if (isScroll) 100L else 500L
 
     val targetsExt get() = targets ?: emptyList()

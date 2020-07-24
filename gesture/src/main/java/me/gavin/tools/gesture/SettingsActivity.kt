@@ -29,11 +29,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         super.onViewCreated(view, savedInstanceState)
         // https://stackoverflow.com/questions/32477726/android-no-getedittext-method-in-edittextpreference-with-preference-support-li
         findPreference<EditTextPreference>("taskRepeatTimes")?.apply {
+            summary = Config.taskRepeatTimes.toString()
             setOnPreferenceChangeListener { _, newValue ->
                 newValue.toString().toIntOrNull()?.let {
                     Config.taskRepeatTimes = it
+                    summary = Config.taskRepeatTimes.toString()
                 }
-                false
+                true
             }
         }
     }

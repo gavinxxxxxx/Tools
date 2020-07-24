@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Looper
 import androidx.annotation.RequiresApi
 import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
 import me.gavin.util.print
 import java.util.concurrent.TimeUnit
 import kotlin.math.abs
@@ -48,13 +49,22 @@ fun Event.event2observable(service: AccessibilityService): Observable<*> {
                 }
             }
             .map { GestureDescription.StrokeDescription(it, 0, durationExt) }
-            .map { GestureDescription.Builder().addStroke(it).build() }
-            .flatMap { it.gd2Observable(service) }
+            .flatMap {
+                GestureDescription.Builder()
+                        .addStroke(it)
+                        .build()
+                        .gd2Observable(service)
+                        .onErrorReturn { Unit }
+                        .zipWith<Any, Any>(
+                                Observable.timer(it.duration, TimeUnit.MILLISECONDS),
+                                BiFunction { _, _ -> Unit }
+                        )
+            }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
-fun Event.event2observableV26(service: AccessibilityService):Observable<*> {
-    val timeScale = duration?.let { it * 1f / parts.last().time } ?: 1f
+fun Event.event2observableV26(service: AccessibilityService): Observable<*> {
+    val timeScale = durationExt.toFloat() / parts.last().time
     return (1..parts.lastIndex).map { i ->
         Path().apply {
             moveTo(getVal(parts[i - 1].x, 0f, Ext.w), getVal(parts[i - 1].y, 0f, Ext.h))
@@ -75,16 +85,22 @@ fun Event.event2observableV26(service: AccessibilityService):Observable<*> {
             }
         }
     }.map {
-        GestureDescription.Builder().addStroke(it).build()
-    }.map {
-        it.gd2Observable(service)
+        GestureDescription.Builder()
+                .addStroke(it)
+                .build()
+                .gd2Observable(service)
+                .onErrorReturn { Unit }
+                .zipWith<Any, Any>(
+                        Observable.timer(it.duration, TimeUnit.MILLISECONDS),
+                        BiFunction { _, _ -> Unit }
+                )
     }.let { ls ->
         Observable.timer(delayExt, TimeUnit.MILLISECONDS)
                 .flatMap { Observable.concatArray(*ls.toTypedArray()) }
     }
 }
 
-fun GestureDescription.gd2Observable(service: AccessibilityService) = Observable.create<GestureDescription> { emitter ->
+fun GestureDescription.gd2Observable(service: AccessibilityService) = Observable.create<Any> { emitter ->
     service.dispatchGesture(this, object : AccessibilityService.GestureResultCallback() {
         override fun onCancelled(gestureDescription: GestureDescription) {
             super.onCancelled(gestureDescription)

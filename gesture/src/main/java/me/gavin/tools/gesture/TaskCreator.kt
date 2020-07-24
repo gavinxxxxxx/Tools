@@ -20,7 +20,6 @@ import me.gavin.ext.textTrim
 import me.gavin.ext.toIntOr0
 import me.gavin.ext.toLongOr0
 import me.gavin.util.getScreenWidth
-import me.gavin.util.toastError
 import kotlin.math.roundToInt
 
 @SuppressLint("ClickableViewAccessibility")
@@ -87,7 +86,7 @@ class TaskCreator(private val service: AccessibilityService) {
             task.id = 0L
             task.title = ""
             task.intro = ""
-            task.delay = 0L
+            task.repeat = 0
             task.repeatDelay = 0L
         }
     }
@@ -107,7 +106,7 @@ class TaskCreator(private val service: AccessibilityService) {
         task.id = t.id
         task.title = t.title
         task.intro = t.intro
-        task.delay = t.delay
+        task.repeat = t.repeat
         task.repeatDelay = t.repeatDelay
     }
 
@@ -304,9 +303,8 @@ class TaskCreator(private val service: AccessibilityService) {
         val root = LayoutInflater.from(service).inflate(R.layout.task_dialog, null)
         root.etTitle.setText(task.title)
         root.etIntro.setText(task.intro)
-        root.etDelay.setText(task.delay.toString())
         root.etTimes.setText(task.repeat.toString())
-        root.etDelay2.setText(task.repeatDelay.toString())
+        root.etDelay.setText(task.repeatDelay.toString())
         AlertDialog.Builder(service)
                 .setTitle("设置")
                 .setView(root)
@@ -314,18 +312,16 @@ class TaskCreator(private val service: AccessibilityService) {
                     task.id = 0L
                     task.title = root.etTitle.textTrim
                     task.intro = root.etIntro.textTrim
-                    task.delay = root.etDelay.toLongOr0
                     task.repeat = root.etTimes.toIntOr0
-                    task.repeatDelay = root.etDelay2.toLongOr0
+                    task.repeatDelay = root.etDelay.toLongOr0
                     saveTask2()
                 }
                 .setNegativeButton("取消", null)
                 .setPositiveButton("确定") { _, _ ->
                     task.title = root.etTitle.textTrim
                     task.intro = root.etIntro.textTrim
-                    task.delay = root.etDelay.toLongOr0
                     task.repeat = root.etTimes.toIntOr0
-                    task.repeatDelay = root.etDelay2.toLongOr0
+                    task.repeatDelay = root.etDelay.toLongOr0
                     saveTask2()
                 }
                 .create()
