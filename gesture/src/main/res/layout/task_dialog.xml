@@ -1,58 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="24dp">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="标题" />
+            android:text="标题"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
             android:id="@+id/etTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text" />
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvIntro"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="描述" />
+            android:text="描述"
+            app:layout_constraintTop_toBottomOf="@+id/etTitle" />
 
         <EditText
             android:id="@+id/etIntro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            app:layout_constraintTop_toBottomOf="@+id/tvIntro" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvTimes"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="循环次数(0代表无限循环)" />
+            android:text="循环次数(0代表无限循环)"
+            app:layout_constraintTop_toBottomOf="@+id/etIntro" />
 
         <EditText
             android:id="@+id/etTimes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="number" />
+            android:inputType="number"
+            app:layout_constraintTop_toBottomOf="@+id/tvTimes" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvDelay"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="循环延迟(ms)" />
+            android:text="循环延迟(ms)"
+            app:layout_constraintTop_toBottomOf="@+id/etTimes" />
 
         <EditText
             android:id="@+id/etDelay"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="number" />
+            android:inputType="number"
+            app:layout_constraintEnd_toStartOf="@+id/tvDelayOff"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDelay" />
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/tvDelayOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" + "
+            android:textSize="18sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/etDelay"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/etTimes" />
+
+        <EditText
+            android:id="@+id/etDelayOff"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvDelayOff"
+            app:layout_constraintTop_toBottomOf="@+id/tvDelay" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>

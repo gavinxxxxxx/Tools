@@ -22,10 +22,13 @@ data class Task(
         var intro: String? = null,
         var repeat: Int = 0,
         var repeatDelay: Long = 0L,
+        var repeatDelayOff: Long = 0L,
         var time: Long = System.currentTimeMillis()) {
 
     @Ignore
     var events: MutableList<Event> = arrayListOf()
+
+    val repeatDelayExt: Long get() = (repeatDelay .. repeatDelay + repeatDelayOff).random()
 }
 
 @Entity(foreignKeys = [
@@ -36,8 +39,7 @@ data class Task(
 )
 data class Event(
         val action: Int,
-        var dx: Float? = null,
-        var dy: Float? = null,
+        var offset: Float? = null,
         var delay: Long? = null,
         var delayOff: Long? = null,
         var duration: Long? = null,
@@ -60,9 +62,12 @@ data class Event(
                 .random()
     val durationExt: Long
         get() = (duration ?: parts.lastOrNull()?.time ?: durationDefault)
-                .let { it..(it * Config.eventDurationOff).roundToLong() }
+                .let { it to (Config.eventDurationOff / 100f * it).roundToLong() }
+                .let { minOf(it.first, it.second)..maxOf(it.first, it.second) }
                 .random()
     val durationDefault get() = if (isClick) 50L else if (isScroll) 100L else 500L
+
+    val offsetExt: Float get() = offset ?: Config.eventLocationOff / 100f
 
     val targetsExt get() = targets ?: emptyList()
 }

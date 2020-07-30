@@ -7,6 +7,8 @@ import androidx.core.content.getSystemService
 import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.BiFunction
+import me.gavin.base.takeOrElse
 import java.util.concurrent.TimeUnit
 
 class TaskExecutor(private val service: AccessibilityService, private val task: Task) : Disposable {
@@ -28,7 +30,9 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
                     }
                 }
                 .repeatWhen {
-                    it.delay(task.repeatDelay, TimeUnit.MILLISECONDS)
+                    it.takeOrElse(task.repeat <= 0) {
+                        it.zipWith<Any, Any>(Observable.range(0, task.repeat), BiFunction { _, _ -> Unit })
+                    }.delay(task.repeatDelayExt, TimeUnit.MILLISECONDS)
                 }
                 .subscribe({
 

@@ -14,8 +14,9 @@ import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
+private val hv get() = minOf(Ext.w, Ext.h)
 private fun getVal(v: Float, d: Float, s: Int): Float {
-    return ((s * (v - abs(d))).roundToInt()..(s * (v + abs(d))).roundToInt()).random().toFloat()
+    return ((s * v - hv * abs(d)).roundToInt()..(s * v + hv * abs(d)).roundToInt()).random().toFloat()
 }
 
 fun Event.toObservable(service: AccessibilityService): Observable<*> {
@@ -42,9 +43,9 @@ fun Event.event2observable(service: AccessibilityService): Observable<*> {
     return Observable.timer(delayExt, TimeUnit.MILLISECONDS)
             .map {
                 Path().apply {
-                    moveTo(getVal(parts.first().x, 0f, Ext.w), getVal(parts.first().y, 0f, Ext.h))
+                    moveTo(getVal(parts.first().x, offsetExt, Ext.w), getVal(parts.first().y, offsetExt, Ext.h))
                     for (i in 1..parts.lastIndex) {
-                        lineTo(getVal(parts[i].x, 0f, Ext.w), getVal(parts[i].y, 0f, Ext.h))
+                        lineTo(getVal(parts[i].x, offsetExt, Ext.w), getVal(parts[i].y, offsetExt, Ext.h))
                     }
                 }
             }

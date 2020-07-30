@@ -8,12 +8,12 @@
             app:dialogLayout="@layout/preference_edit_text"
             app:key="taskRepeatTimes"
             app:summary="0"
-            app:title="循环次数(0代表无限循环)" />
+            app:title="循环次数" />
 
         <Preference
-            app:key="task_repeat_delay"
+            app:key="taskRepeatDelay"
             app:summary="500 ~ 1000"
-            app:title="循环延迟(ms)" />
+            app:title="循环延迟" />
 
     </PreferenceCategory>
 
@@ -24,34 +24,37 @@
         <Preference
             app:key="eventDelay"
             app:summary="100 ~ 200"
-            app:title="事件延迟(ms)" />
+            app:title="事件延迟" />
 
-        <Preference
+        <EditTextPreference
+            app:dialogLayout="@layout/preference_edit_text"
             app:key="eventDurationOff"
-            app:summary="1"
-            app:title="事件持续时间偏移倍数" />
+            app:summary="150"
+            app:title="事件持续时间偏移" />
 
-        <Preference
-            app:key="event_diff"
-            app:summary="10"
-            app:title="位置偏移半径(px)" />
+        <EditTextPreference
+            app:dialogLayout="@layout/preference_edit_text"
+            app:key="eventLocationOff"
+            app:summary="2"
+            app:title="事件位置偏移" />
 
         <SwitchPreferenceCompat
-            app:dependency="event_diff"
-            app:key="event_diff_scroll_state"
+            app:dependency="eventLocationOff"
+            app:key="event2OffsetEnable"
             app:summaryOff="双点手势不偏移"
             app:summaryOn="双点手势偏移"
             app:title="双点手势偏移" />
 
         <SwitchPreferenceCompat
-            app:dependency="event_diff_scroll_state"
-            app:key="event_diff_scroll_diff"
+            app:dependency="event2OffsetEnable"
+            app:key="event2Offset2"
             app:summaryOff="控制点将向不同方向偏移不同距离"
             app:summaryOn="控制点将向同一个方向偏移相同距离"
             app:title="双点手势偏移同步" />
 
         <SwitchPreferenceCompat
-            app:key="event_diff_catch"
+            app:dependency="eventLocationOff"
+            app:key="event9OffsetEnable"
             app:summaryOff="多点手势不偏移"
             app:summaryOn="多点手势将整体向同一方向偏移"
             app:title="多点手势偏移" />
