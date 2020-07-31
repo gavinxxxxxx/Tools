@@ -219,7 +219,7 @@ class TaskCreator(private val service: AccessibilityService) {
         listOf(0, event.parts.lastIndex).map { i ->
             ImageView(service).apply {
                 setImageResource(R.drawable.ic_adjust_black_24dp)
-                if (!event.isScrollMulti) {
+                if (!event.isScroll9) {
                     setOnTouchListener { v, e ->
                         v.layoutParams<WindowManager.LayoutParams>().apply {
                             x = e.rawX.roundToInt() - v.measuredWidth / 2

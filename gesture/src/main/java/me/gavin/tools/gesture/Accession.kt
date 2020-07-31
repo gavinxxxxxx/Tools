@@ -10,14 +10,11 @@ import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import me.gavin.util.print
 import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 
 private val hv get() = minOf(Ext.w, Ext.h)
-private fun getVal(v: Float, d: Float, s: Int): Float {
-    return ((s * v - hv * abs(d)).roundToInt()..(s * v + hv * abs(d)).roundToInt()).random().toFloat()
-}
+private fun getVal(v: Float, s: Int, d: Int) = s * v + d
 
 fun Event.toObservable(service: AccessibilityService): Observable<*> {
     return when {
@@ -43,9 +40,15 @@ fun Event.event2observable(service: AccessibilityService): Observable<*> {
     return Observable.timer(delayExt, TimeUnit.MILLISECONDS)
             .map {
                 Path().apply {
-                    moveTo(getVal(parts.first().x, offsetExt, Ext.w), getVal(parts.first().y, offsetExt, Ext.h))
+                    var dx = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
+                    var dy = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
+                    moveTo(getVal(parts.first().x, Ext.w, dx), getVal(parts.first().y, Ext.h, dy))
                     for (i in 1..parts.lastIndex) {
-                        lineTo(getVal(parts[i].x, offsetExt, Ext.w), getVal(parts[i].y, offsetExt, Ext.h))
+                        if (isScroll && !Config.event2Offset2) {
+                            dx = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
+                            dy = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
+                        }
+                        lineTo(getVal(parts[i].x, Ext.w, dx), getVal(parts[i].y, Ext.h, dy))
                     }
                 }
             }
@@ -66,10 +69,12 @@ fun Event.event2observable(service: AccessibilityService): Observable<*> {
 @RequiresApi(Build.VERSION_CODES.O)
 fun Event.event2observableV26(service: AccessibilityService): Observable<*> {
     val timeScale = durationExt.toFloat() / parts.last().time
+    val dx = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
+    val dy = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
     return (1..parts.lastIndex).map { i ->
         Path().apply {
-            moveTo(getVal(parts[i - 1].x, 0f, Ext.w), getVal(parts[i - 1].y, 0f, Ext.h))
-            lineTo(getVal(parts[i].x, 0f, Ext.w), getVal(parts[i].y, 0f, Ext.h))
+            moveTo(getVal(parts[i - 1].x, Ext.w, dx), getVal(parts[i - 1].y, Ext.h, dy))
+            lineTo(getVal(parts[i].x, Ext.w, dx), getVal(parts[i].y, Ext.h, dy))
         }
     }.let { paths ->
         var strokeDescription: GestureDescription.StrokeDescription? = null

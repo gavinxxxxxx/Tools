@@ -23,7 +23,7 @@ object Config {
             field = value
             sp.edit { putString("taskRepeatOff", value.toString()) }
         }
-    val taskRepeatDelayExt get() = "任务再执行将延迟 $taskRepeatDelay ~ ${taskRepeatDelay + taskRepeatOff} ms"
+    val taskRepeatDelayExt get() = "任务再执行时将延迟 $taskRepeatDelay ~ ${taskRepeatDelay + taskRepeatOff} ms"
 
     var eventDelay = sp.getString("eventDelay", "0")?.toLongOrNull() ?: 0
         set(value) {

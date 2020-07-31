@@ -54,7 +54,8 @@ data class Event(
 
     val isClick get() = parts.size == 1
     val isScroll get() = parts.size > 1
-    val isScrollMulti get() = parts.size > 2
+    val isScroll2 get() = parts.size == 2
+    val isScroll9 get() = parts.size > 2
 
     val delayExt: Long
         get() = (delay ?: Config.eventDelay)
@@ -67,7 +68,8 @@ data class Event(
                 .random()
     val durationDefault get() = if (isClick) 50L else if (isScroll) 100L else 500L
 
-    val offsetExt: Float get() = offset ?: Config.eventLocationOff / 100f
+    val offsetExt_ get() = offset ?: Config.eventLocationOff / 100f
+    val offsetExt get() = if (isClick || isScroll2 && Config.event2OffsetEnable || isScroll9 && Config.event9OffsetEnable) offsetExt_ else 0f
 
     val targetsExt get() = targets ?: emptyList()
 }

@@ -41,22 +41,22 @@
         <SwitchPreferenceCompat
             app:dependency="eventLocationOff"
             app:key="event2OffsetEnable"
-            app:summaryOff="双点手势不偏移"
-            app:summaryOn="双点手势偏移"
+            app:summaryOff="双点(及 8.0 以下设备多点)手势不偏移"
+            app:summaryOn="双点(及 8.0 以下设备多点)手势偏移"
             app:title="双点手势偏移" />
 
         <SwitchPreferenceCompat
             app:dependency="event2OffsetEnable"
             app:key="event2Offset2"
-            app:summaryOff="控制点将向不同方向偏移不同距离"
-            app:summaryOn="控制点将向同一个方向偏移相同距离"
+            app:summaryOff="双(及 8.0 以下设备多)控制点将向不同方向偏移不同距离"
+            app:summaryOn="双(及 8.0 以下设备多)控制点将向同一个方向偏移相同距离"
             app:title="双点手势偏移同步" />
 
         <SwitchPreferenceCompat
             app:dependency="eventLocationOff"
             app:key="event9OffsetEnable"
-            app:summaryOff="多点手势不偏移"
-            app:summaryOn="多点手势将整体向同一方向偏移"
+            app:summaryOff="多点手势不偏移(8.0 以上设备)"
+            app:summaryOn="多点手势将整体向同一方向偏移(8.0 以上设备)"
             app:title="多点手势偏移" />
 
     </PreferenceCategory>

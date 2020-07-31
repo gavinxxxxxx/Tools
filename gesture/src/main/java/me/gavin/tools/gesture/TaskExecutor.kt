@@ -8,6 +8,7 @@ import com.google.gson.Gson
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.BiFunction
+import io.reactivex.rxkotlin.subscribeBy
 import me.gavin.base.takeOrElse
 import java.util.concurrent.TimeUnit
 
@@ -27,16 +28,15 @@ class TaskExecutor(private val service: AccessibilityService, private val task: 
                         it.toObservable(service)
                     }.toTypedArray().let {
                         Observable.concatArray(*it)
+                    }.repeatWhen {
+                        it.takeOrElse(task.repeat <= 0) {
+                            it.zipWith<Any, Any>(Observable.range(0, task.repeat), BiFunction { _, _ -> Unit })
+                        }.flatMap {
+                            Observable.timer(task.repeatDelayExt, TimeUnit.MILLISECONDS)
+                        }
                     }
                 }
-                .repeatWhen {
-                    it.takeOrElse(task.repeat <= 0) {
-                        it.zipWith<Any, Any>(Observable.range(0, task.repeat), BiFunction { _, _ -> Unit })
-                    }.delay(task.repeatDelayExt, TimeUnit.MILLISECONDS)
-                }
-                .subscribe({
-
-                }, {
+                .subscribeBy(onError = {
                     it.printStackTrace()
                 })
                 .also { disposable?.dispose() }
