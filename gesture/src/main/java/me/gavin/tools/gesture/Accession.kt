@@ -19,12 +19,12 @@ private fun getVal(v: Float, s: Int, d: Int) = s * v + d
 fun Event.toObservable(service: AccessibilityService): Observable<*> {
     return when {
         action != ACTION_CATCH -> {
-            Observable.timer(delayExt, TimeUnit.MILLISECONDS)
+            Observable.defer { Observable.timer(delayExt, TimeUnit.MILLISECONDS) }
                     .doOnNext { service.performGlobalAction(action) }
                     .delay(durationExt, TimeUnit.MILLISECONDS)
         }
         parts.isEmpty() -> {
-            Observable.timer(delayExt, TimeUnit.MILLISECONDS)
+            Observable.defer { Observable.timer(delayExt, TimeUnit.MILLISECONDS) }
                     .delay(durationExt, TimeUnit.MILLISECONDS)
         }
         parts.size > 2 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O -> {
@@ -37,7 +37,7 @@ fun Event.toObservable(service: AccessibilityService): Observable<*> {
 }
 
 fun Event.event2observable(service: AccessibilityService): Observable<*> {
-    return Observable.timer(delayExt, TimeUnit.MILLISECONDS)
+    return Observable.defer { Observable.timer(delayExt, TimeUnit.MILLISECONDS) }
             .map {
                 Path().apply {
                     var dx = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
@@ -105,7 +105,7 @@ fun Event.event2observableV26(service: AccessibilityService): Observable<*> {
             Observable.concatArray(*it.toTypedArray())
         }
     }.let { o ->
-        Observable.timer(delayExt, TimeUnit.MILLISECONDS).flatMap { o }
+        Observable.defer { Observable.timer(delayExt, TimeUnit.MILLISECONDS).flatMap { o } }
     }
 }
 

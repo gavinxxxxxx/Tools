@@ -53,9 +53,30 @@
 
         <EditText
             android:id="@+id/eventDuration"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="number"
+            app:layout_constraintEnd_toStartOf="@+id/tvDelayOff"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDuration" />
+
+        <TextView
+            android:id="@+id/tvDurationOff"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" + "
+            android:textSize="18sp"
+            app:layout_constraintBaseline_toBaselineOf="@+id/eventDuration"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <EditText
+            android:id="@+id/eventDurationOff"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tvDelayOff"
             app:layout_constraintTop_toBottomOf="@+id/tvDuration" />
 
         <TextView

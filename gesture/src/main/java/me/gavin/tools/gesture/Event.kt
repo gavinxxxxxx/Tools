@@ -42,6 +42,7 @@ class Event(
         var delay: Long? = null,
         var delayOff: Long? = null,
         var duration: Long? = null,
+        var durationOff: Int? = null,
         var offset: Int? = null,
         @PrimaryKey(autoGenerate = true) var id: Long = 0L,
         @ColumnInfo(index = true) var taskId: Long = 0L) {
@@ -63,7 +64,7 @@ class Event(
                 .random()
     val durationExt: Long
         get() = (duration ?: parts.lastOrNull()?.time ?: durationDefault)
-                .let { it to (Config.eventDurationOff / 100f * it).roundToLong() }
+                .let { it to ((durationOff ?: Config.eventDurationOff) / 100f * it).roundToLong() }
                 .let { minOf(it.first, it.second)..maxOf(it.first, it.second) }
                 .random()
     val durationDefault get() = if (isClick) 50L else if (isScroll) 100L else 500L

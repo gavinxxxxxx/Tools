@@ -287,6 +287,7 @@ class TaskCreator(private val service: AccessibilityService) {
         root.eventDelay.setText(event.delay?.toString())
         root.eventDelayOff.setText(event.delayOff?.toString())
         root.eventDuration.setText(event.duration?.toString())
+        root.eventDurationOff.setText(event.durationOff?.toString())
         root.eventOffset.setText(event.offset?.toString())
         AlertDialog.Builder(service)
                 .setTitle("事件设置")
@@ -296,6 +297,7 @@ class TaskCreator(private val service: AccessibilityService) {
                     event.delay = root.eventDelay.textTrim.toLongOrNull()
                     event.delayOff = root.eventDelayOff.textTrim.toLongOrNull()
                     event.duration = root.eventDuration.textTrim.toLongOrNull()
+                    event.durationOff = root.eventDurationOff.textTrim.toIntOrNull()
                     event.offset = root.eventOffset.textTrim.toIntOrNull()
                 }
                 .setNeutralButton("任务设置") { _, _ -> taskDialog(false) }
