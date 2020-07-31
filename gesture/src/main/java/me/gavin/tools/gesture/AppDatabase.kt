@@ -43,19 +43,19 @@ abstract class AppDatabase : RoomDatabase() {
         }
 
         private fun initData() {
-            val wzry = Gson().fromJson(jsonWzry, Task::class.java)
-            val zfb = Gson().fromJson(jsonZfbxfq, Task::class.java)
-
-            val list = listOf(wzry/*, zfb*/)
-            instance.taskDao.insertTask(list).forEachIndexed { i, taskId ->
-                val events = list[i].events
-                events.forEach { it.taskId = taskId }
-                instance.taskDao.insertEvent(events).forEachIndexed { ei, eventId ->
-                    val parts = events[ei].parts
-                    parts.forEach { it.eventId = eventId }
-                    instance.taskDao.insertPart(parts)
-                }
-            }
+//            val wzry = Gson().fromJson(jsonWzry, Task::class.java)
+//            val zfb = Gson().fromJson(jsonZfbxfq, Task::class.java)
+//
+//            val list = listOf(wzry/*, zfb*/)
+//            instance.taskDao.insertTask(list).forEachIndexed { i, taskId ->
+//                val events = list[i].events
+//                events.forEach { it.taskId = taskId }
+//                instance.taskDao.insertEvent(events).forEachIndexed { ei, eventId ->
+//                    val parts = events[ei].parts
+//                    parts.forEach { it.eventId = eventId }
+//                    instance.taskDao.insertPart(parts)
+//                }
+//            }
         }
     }
 
