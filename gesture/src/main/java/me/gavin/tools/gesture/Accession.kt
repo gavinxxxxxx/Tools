@@ -68,41 +68,44 @@ fun Event.event2observable(service: AccessibilityService): Observable<*> {
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun Event.event2observableV26(service: AccessibilityService): Observable<*> {
-    val timeScale = durationExt.toFloat() / parts.last().time
-    val dx = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
-    val dy = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
-    return (1..parts.lastIndex).map { i ->
-        Path().apply {
-            moveTo(getVal(parts[i - 1].x, Ext.w, dx), getVal(parts[i - 1].y, Ext.h, dy))
-            lineTo(getVal(parts[i].x, Ext.w, dx), getVal(parts[i].y, Ext.h, dy))
-        }
-    }.let { paths ->
-        var strokeDescription: GestureDescription.StrokeDescription? = null
-        paths.mapIndexed { i, path ->
-            val duration = ((parts[i + 1].time - parts[i].time) * timeScale).roundToLong()
-            strokeDescription?.let {
-                it.continueStroke(path, 0, duration, i < paths.lastIndex).also {
-                    strokeDescription = it
-                }
-            } ?: let {
-                GestureDescription.StrokeDescription(path, 0, duration, i < parts.lastIndex - 1).also {
-                    strokeDescription = it
+    return Observable.defer {
+        val timeScale = durationExt.toFloat() / parts.last().time
+        val dx = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
+        val dy = ((hv * -offsetExt).roundToInt()..(hv * offsetExt).roundToInt()).random()
+        (1..parts.lastIndex).map { i ->
+            Path().apply {
+                moveTo(getVal(parts[i - 1].x, Ext.w, dx), getVal(parts[i - 1].y, Ext.h, dy))
+                lineTo(getVal(parts[i].x, Ext.w, dx), getVal(parts[i].y, Ext.h, dy))
+            }
+        }.let { paths ->
+            var strokeDescription: GestureDescription.StrokeDescription? = null
+            paths.mapIndexed { i, path ->
+                val duration = ((parts[i + 1].time - parts[i].time) * timeScale).roundToLong()
+                strokeDescription?.let {
+                    it.continueStroke(path, 0, duration, i < paths.lastIndex).also {
+                        strokeDescription = it
+                    }
+                } ?: let {
+                    GestureDescription.StrokeDescription(path, 0, duration, i < parts.lastIndex - 1).also {
+                        strokeDescription = it
+                    }
                 }
             }
+        }.map {
+            GestureDescription.Builder()
+                    .addStroke(it)
+                    .build()
+                    .gd2Observable(service)
+                    .onErrorReturn { Unit }
+                    .zipWith<Any, Any>(
+                            Observable.timer(it.duration, TimeUnit.MILLISECONDS),
+                            BiFunction { _, _ -> Unit }
+                    )
+        }.let {
+            Observable.concatArray(*it.toTypedArray())
         }
-    }.map {
-        GestureDescription.Builder()
-                .addStroke(it)
-                .build()
-                .gd2Observable(service)
-                .onErrorReturn { Unit }
-                .zipWith<Any, Any>(
-                        Observable.timer(it.duration, TimeUnit.MILLISECONDS),
-                        BiFunction { _, _ -> Unit }
-                )
-    }.let { ls ->
-        Observable.timer(delayExt, TimeUnit.MILLISECONDS)
-                .flatMap { Observable.concatArray(*ls.toTypedArray()) }
+    }.let { o ->
+        Observable.timer(delayExt, TimeUnit.MILLISECONDS).flatMap { o }
     }
 }
 
