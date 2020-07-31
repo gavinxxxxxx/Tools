@@ -16,7 +16,7 @@ import kotlin.math.roundToLong
 const val ACTION_CATCH = 0
 
 @Entity
-data class Task(
+class Task(
         @PrimaryKey(autoGenerate = true) var id: Long = 0L,
         var title: String = "",
         var intro: String? = null,
@@ -37,7 +37,7 @@ data class Task(
             childColumns = ["taskId"],
             onDelete = ForeignKey.CASCADE)]
 )
-data class Event(
+class Event(
         val action: Int,
         var offset: Float? = null,
         var delay: Long? = null,
@@ -80,7 +80,7 @@ data class Event(
             childColumns = ["eventId"],
             onDelete = ForeignKey.CASCADE)]
 )
-data class Part(
+class Part(
         var x: Float,
         var y: Float,
         var time: Long = 0,
@@ -93,7 +93,7 @@ fun Task.findEventByView(target: View): Event? {
     return events.find { it.targets?.contains(target) == true }
 }
 
-data class EventWithPart(
+class EventWithPart(
         @Embedded val event: Event,
         @Relation(
                 parentColumn = "id",

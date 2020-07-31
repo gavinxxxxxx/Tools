@@ -11,7 +11,7 @@ import me.gavin.util.log
 import java.util.concurrent.Executors
 
 
-@Database(entities = [Task::class, Event::class, Part::class], version = 3)
+@Database(entities = [Task::class, Event::class, Part::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract val taskDao: TaskDao
@@ -20,7 +20,7 @@ abstract class AppDatabase : RoomDatabase() {
         val instance by lazy {
             Room.databaseBuilder(Gavin.app, AppDatabase::class.java, "gesture.db")
                     .fallbackToDestructiveMigration()
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_999)
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
@@ -36,15 +36,9 @@ abstract class AppDatabase : RoomDatabase() {
                     .build()
         }
 
-        private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+        private val MIGRATION_1_999: Migration = object : Migration(1, 999) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE `Fruit` (`id` INTEGER, " + "`name` TEXT, PRIMARY KEY(`id`))")
-            }
-        }
-
-        private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
-            override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE Book " + " ADD COLUMN pub_year INTEGER")
             }
         }
 

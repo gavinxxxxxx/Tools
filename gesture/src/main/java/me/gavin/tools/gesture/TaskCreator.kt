@@ -279,7 +279,7 @@ class TaskCreator(private val service: AccessibilityService) {
     private fun removeEvent() {
         task.events.lastOrNull()?.let {
             it.targets?.forEach { windowManager.removeView(it) }
-            task.events.remove(it)
+            task.events.removeAt(task.events.lastIndex)
         }
     }
 
