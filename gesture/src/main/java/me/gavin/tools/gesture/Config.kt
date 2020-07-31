@@ -13,30 +13,30 @@ object Config {
             sp.edit { putString("taskRepeatTimes", value.toString()) }
         }
     val taskRepeatTimesExt get() = "任务将执行 ${if (taskRepeatTimes > 0) taskRepeatTimes else "∞"} 次"
-    var taskRepeatDelay = sp.getString("taskRepeatDelay", "0")?.toLongOrNull() ?: 0
+    var taskRepeatDelay = sp.getString("taskRepeatDelay", "500")?.toLongOrNull() ?: 500
         set(value) {
             field = value
             sp.edit { putString("taskRepeatDelay", value.toString()) }
         }
-    var taskRepeatOff = (sp.getString("taskRepeatOff", "0")?.toLongOrNull() ?: 0)
+    var taskRepeatOff = (sp.getString("taskRepeatOff", "500")?.toLongOrNull() ?: 500)
         set(value) {
             field = value
             sp.edit { putString("taskRepeatOff", value.toString()) }
         }
     val taskRepeatDelayExt get() = "任务再执行时将延迟 $taskRepeatDelay ~ ${taskRepeatDelay + taskRepeatOff} ms"
 
-    var eventDelay = sp.getString("eventDelay", "0")?.toLongOrNull() ?: 0
+    var eventDelay = sp.getString("eventDelay", "100")?.toLongOrNull() ?: 100
         set(value) {
             field = value
             sp.edit { putString("eventDelay", value.toString()) }
         }
-    var eventDelayOff = (sp.getString("eventDelayOff", "0")?.toLongOrNull() ?: 0)
+    var eventDelayOff = (sp.getString("eventDelayOff", "100")?.toLongOrNull() ?: 100)
         set(value) {
             field = value
             sp.edit { putString("eventDelayOff", value.toString()) }
         }
     val eventDelayExt get() = "事件执行将延迟 $eventDelay ~ ${eventDelay + eventDelayOff} ms"
-    var eventDurationOff = (sp.getString("eventDelayOff", "50")?.toIntOrNull() ?: 50)
+    var eventDurationOff = (sp.getString("eventDelayOff", "150")?.toIntOrNull() ?: 150)
         set(value) {
             field = value
             sp.edit { putString("eventDelayOff", value.toString()) }

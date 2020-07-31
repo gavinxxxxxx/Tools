@@ -12,7 +12,6 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import androidx.core.content.getSystemService
 import kotlinx.android.synthetic.main.add_dialog.view.*
-import kotlinx.android.synthetic.main.add_dialog.view.etDelay
 import kotlinx.android.synthetic.main.floating_widget.view.*
 import kotlinx.android.synthetic.main.task_dialog.view.*
 import me.gavin.ext.layoutParams
@@ -285,15 +284,19 @@ class TaskCreator(private val service: AccessibilityService) {
 
     private fun dialogg(event: Event) {
         val root = LayoutInflater.from(service).inflate(R.layout.add_dialog, null)
-        root.etDelay.setText(event.delay?.toString())
-        root.etDuration.setText(event.duration?.toString())
+        root.eventDelay.setText(event.delay?.toString())
+        root.eventDelayOff.setText(event.delayOff?.toString())
+        root.eventDuration.setText(event.duration?.toString())
+        root.eventOffset.setText(event.offset?.toString())
         AlertDialog.Builder(service)
-                .setTitle("设置")
+                .setTitle("事件设置")
                 .setView(root)
                 .setNegativeButton("取消", null)
                 .setPositiveButton("确定") { _, _ ->
-                    event.delay = root.etDelay.textTrim.toLongOrNull()
-                    event.duration = root.etDuration.textTrim.toLongOrNull()
+                    event.delay = root.eventDelay.textTrim.toLongOrNull()
+                    event.delayOff = root.eventDelayOff.textTrim.toLongOrNull()
+                    event.duration = root.eventDuration.textTrim.toLongOrNull()
+                    event.offset = root.eventOffset.textTrim.toIntOrNull()
                 }
                 .setNeutralButton("任务设置") { _, _ -> taskDialog(false) }
                 .create()
@@ -306,32 +309,32 @@ class TaskCreator(private val service: AccessibilityService) {
 
     private fun taskDialog(withSave: Boolean) {
         val root = LayoutInflater.from(service).inflate(R.layout.task_dialog, null)
-        root.etTitle.setText(task.title)
-        root.etIntro.setText(task.intro)
-        root.etTimes.setText(task.repeat.toString())
-        root.etDelay.setText(task.repeatDelay.toString())
-        root.etDelayOff.setText(task.repeatDelayOff.toString())
+        root.taskTitle.setText(task.title)
+        root.taskIntro.setText(task.intro)
+        root.taskTimes.setText(task.repeat.toString())
+        root.taskDelay.setText(task.repeatDelay.toString())
+        root.taskDelayOff.setText(task.repeatDelayOff.toString())
         AlertDialog.Builder(service)
-                .setTitle("设置")
+                .setTitle("任务设置")
                 .setView(root)
                 .setNegativeButton("取消", null)
                 .setPositiveButton("确定") { _, _ ->
-                    task.title = root.etTitle.textTrim
-                    task.intro = root.etIntro.textTrim
-                    task.repeat = root.etTimes.toIntOr0
-                    task.repeatDelay = root.etDelay.toLongOr0
-                    task.repeatDelayOff = root.etDelayOff.toLongOr0
+                    task.title = root.taskTitle.textTrim
+                    task.intro = root.taskIntro.textTrim
+                    task.repeat = root.taskTimes.toIntOr0
+                    task.repeatDelay = root.taskDelay.toLongOr0
+                    task.repeatDelayOff = root.taskDelayOff.toLongOr0
                     if (withSave) saveTask2()
                 }
                 .also {
                     if (withSave) {
                         it.setNeutralButton("另存") { _, _ ->
                             task.id = 0L
-                            task.title = root.etTitle.textTrim
-                            task.intro = root.etIntro.textTrim
-                            task.repeat = root.etTimes.toIntOr0
-                            task.repeatDelay = root.etDelay.toLongOr0
-                            task.repeatDelayOff = root.etDelay.toLongOr0
+                            task.title = root.taskTitle.textTrim
+                            task.intro = root.taskIntro.textTrim
+                            task.repeat = root.taskTimes.toIntOr0
+                            task.repeatDelay = root.taskDelay.toLongOr0
+                            task.repeatDelayOff = root.taskDelay.toLongOr0
                             saveTask2()
                         }
                     }

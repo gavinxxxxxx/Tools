@@ -17,7 +17,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/etTitle"
+            android:id="@+id/taskTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
@@ -28,10 +28,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="描述"
-            app:layout_constraintTop_toBottomOf="@+id/etTitle" />
+            app:layout_constraintTop_toBottomOf="@+id/taskTitle" />
 
         <EditText
-            android:id="@+id/etIntro"
+            android:id="@+id/taskIntro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
@@ -41,11 +41,11 @@
             android:id="@+id/tvTimes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="循环次数(0代表无限循环)"
-            app:layout_constraintTop_toBottomOf="@+id/etIntro" />
+            android:text="循环次数"
+            app:layout_constraintTop_toBottomOf="@+id/taskIntro" />
 
         <EditText
-            android:id="@+id/etTimes"
+            android:id="@+id/taskTimes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
@@ -56,10 +56,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="循环延迟(ms)"
-            app:layout_constraintTop_toBottomOf="@+id/etTimes" />
+            app:layout_constraintTop_toBottomOf="@+id/taskTimes" />
 
         <EditText
-            android:id="@+id/etDelay"
+            android:id="@+id/taskDelay"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="number"
@@ -73,13 +73,12 @@
             android:layout_height="wrap_content"
             android:text=" + "
             android:textSize="18sp"
-            app:layout_constraintBaseline_toBaselineOf="@+id/etDelay"
+            app:layout_constraintBaseline_toBaselineOf="@+id/taskDelay"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etTimes" />
+            app:layout_constraintStart_toStartOf="parent" />
 
         <EditText
-            android:id="@+id/etDelayOff"
+            android:id="@+id/taskDelayOff"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="number"

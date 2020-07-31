@@ -39,10 +39,10 @@ class Task(
 )
 class Event(
         val action: Int,
-        var offset: Float? = null,
         var delay: Long? = null,
         var delayOff: Long? = null,
         var duration: Long? = null,
+        var offset: Int? = null,
         @PrimaryKey(autoGenerate = true) var id: Long = 0L,
         @ColumnInfo(index = true) var taskId: Long = 0L) {
 
@@ -68,7 +68,7 @@ class Event(
                 .random()
     val durationDefault get() = if (isClick) 50L else if (isScroll) 100L else 500L
 
-    val offsetExt_ get() = offset ?: Config.eventLocationOff / 100f
+    val offsetExt_ get() = (offset ?: Config.eventLocationOff) / 100f
     val offsetExt get() = if (isClick || isScroll2 && Config.event2OffsetEnable || isScroll9 && Config.event9OffsetEnable) offsetExt_ else 0f
 
     val targetsExt get() = targets ?: emptyList()
