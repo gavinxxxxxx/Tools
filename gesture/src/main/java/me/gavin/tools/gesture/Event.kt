@@ -4,6 +4,7 @@ import android.view.View
 import androidx.room.*
 import io.reactivex.Flowable
 import io.reactivex.Single
+import me.gavin.base.IgnoredOnProguard
 import kotlin.math.roundToLong
 
 /**
@@ -16,6 +17,7 @@ import kotlin.math.roundToLong
 const val ACTION_CATCH = 0
 
 @Entity
+@IgnoredOnProguard
 class Task(
         @PrimaryKey(autoGenerate = true) var id: Long = 0L,
         var title: String = "",
@@ -37,6 +39,7 @@ class Task(
             childColumns = ["taskId"],
             onDelete = ForeignKey.CASCADE)]
 )
+@IgnoredOnProguard
 class Event(
         val action: Int,
         var delay: Long? = null,
@@ -81,6 +84,7 @@ class Event(
             childColumns = ["eventId"],
             onDelete = ForeignKey.CASCADE)]
 )
+@IgnoredOnProguard
 class Part(
         var x: Float,
         var y: Float,
@@ -94,6 +98,7 @@ fun Task.findEventByView(target: View): Event? {
     return events.find { it.targets?.contains(target) == true }
 }
 
+@IgnoredOnProguard
 class EventWithPart(
         @Embedded val event: Event,
         @Relation(

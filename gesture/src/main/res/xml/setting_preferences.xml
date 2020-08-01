@@ -6,6 +6,7 @@
 
         <EditTextPreference
             app:dialogLayout="@layout/preference_edit_text"
+            app:isPreferenceVisible="false"
             app:key="taskRepeatTimes"
             app:summary="0"
             app:title="循环次数" />
