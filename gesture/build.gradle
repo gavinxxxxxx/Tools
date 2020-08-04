@@ -2,13 +2,15 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'AndResGuard'
+apply plugin: 'walle'
 
 android {
     compileSdkVersion 28
 
     defaultConfig {
         applicationId "me.gavin.tools.gesture"
-        minSdkVersion 24
+        minSdkVersion 24 // <24时无v1签名
         targetSdkVersion 28
         versionCode 1
         versionName "0.0.1"
@@ -50,6 +52,40 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    walle {
+        apkOutputFolder = new File("${project.buildDir}/outputs/channels")
+        apkFileNameFormat = '${channel}-v${versionName}-${versionCode}.apk'
+        channelFile = new File("${project.projectDir}/channel")
+    }
+}
+
+andResGuard {
+    // mappingFile = file("./resource_mapping.txt")
+    use7zip = true
+    useSign = true
+    keepRoot = false
+    whiteList = [
+            "R.id.*",
+    ]
+    compressFilePattern = [
+            "*.png",
+            "*.jpg",
+            "*.jpeg",
+            "*.gif",
+    ]
+    sevenzip { artifact = 'com.tencent.mm:SevenZip:1.2.18' }
+    // 因 AndResGuard 新版打包签名有问题 此处暂时不使用资源混淆
+    // apksigner verify -v xxx.apk: DOES NOT VERIFY  ERROR: APK Signature Scheme v2 signer #1: Malformed additional attribute #1
+    // assembleReleaseChannels: Execution failed for task ':app:assembleReleaseChannels': app-release.apk has no v2 signature in Apk Signing Block!
+    finalApkBackupPath = "${project.projectDir}/build/outputs/apk/release/app-release2.apk"
+    // digestalg = "SHA-256"
+}
+
+afterEvaluate {
+    tasks.getByName('assembleReleaseChannels') {
+        dependsOn(resguardRelease)
+    }
 }
 
 dependencies {
@@ -63,6 +99,8 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.2.5'
     implementation 'androidx.room:room-rxjava2:2.2.5'
     kapt 'androidx.room:room-compiler:2.2.5'
+
+    implementation 'com.meituan.android.walle:library:1.1.7'
 
     implementation project(path: ':gavin')
 }
