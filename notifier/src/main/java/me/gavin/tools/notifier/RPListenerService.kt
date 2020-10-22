@@ -38,6 +38,7 @@ class RPListenerService : NotificationListenerService() {
             println(" ---------------------------------------------------------------- ")
 
             if (sbn.packageName in App.packages || title == "T50ZDvgrbcyD8keT") {
+                if (title.isBlank() && text.isBlank()) return
                 NotificationHelper.notify(
                     context = this,
                     channel = getAppName(sbn.packageName),
