@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Gesture</string>
+    <string name="app_name">手势模拟器</string>
     <string name="title_activity_settings">a</string>
 
     <!-- Preference Titles -->
