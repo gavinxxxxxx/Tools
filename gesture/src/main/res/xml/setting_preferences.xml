@@ -1,17 +1,18 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
-        app:icon="@drawable/ic_baseline_settings_24"
+        app:iconSpaceReserved="false"
         app:title="任务">
 
         <EditTextPreference
             app:dialogLayout="@layout/preference_edit_text"
-            app:isPreferenceVisible="false"
+            app:iconSpaceReserved="false"
             app:key="taskRepeatTimes"
             app:summary="0"
             app:title="循环次数" />
 
         <Preference
+            app:iconSpaceReserved="false"
             app:key="taskRepeatDelay"
             app:summary="500 ~ 1000"
             app:title="循环延迟" />
@@ -19,28 +20,32 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        app:icon="@drawable/ic_baseline_settings_24"
+        app:iconSpaceReserved="false"
         app:title="事件">
 
         <Preference
+            app:iconSpaceReserved="false"
             app:key="eventDelay"
             app:summary="100 ~ 200"
             app:title="事件延迟" />
 
         <EditTextPreference
             app:dialogLayout="@layout/preference_edit_text"
+            app:iconSpaceReserved="false"
             app:key="eventDurationOff"
             app:summary="150"
             app:title="事件持续时间偏移" />
 
         <EditTextPreference
             app:dialogLayout="@layout/preference_edit_text"
+            app:iconSpaceReserved="false"
             app:key="eventLocationOff"
             app:summary="2"
             app:title="事件位置偏移" />
 
         <SwitchPreferenceCompat
             app:dependency="eventLocationOff"
+            app:iconSpaceReserved="false"
             app:key="event2OffsetEnable"
             app:summaryOff="双点(及 8.0 以下设备多点)手势不偏移"
             app:summaryOn="双点(及 8.0 以下设备多点)手势偏移"
@@ -48,6 +53,7 @@
 
         <SwitchPreferenceCompat
             app:dependency="event2OffsetEnable"
+            app:iconSpaceReserved="false"
             app:key="event2Offset2"
             app:summaryOff="双(及 8.0 以下设备多)控制点将向不同方向偏移不同距离"
             app:summaryOn="双(及 8.0 以下设备多)控制点将向同一个方向偏移相同距离"
@@ -55,6 +61,7 @@
 
         <SwitchPreferenceCompat
             app:dependency="eventLocationOff"
+            app:iconSpaceReserved="false"
             app:key="event9OffsetEnable"
             app:summaryOff="多点手势不偏移(8.0 以上设备)"
             app:summaryOn="多点手势将整体向同一方向偏移(8.0 以上设备)"
