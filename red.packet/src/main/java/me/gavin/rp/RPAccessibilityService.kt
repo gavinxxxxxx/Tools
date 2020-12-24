@@ -10,10 +10,10 @@ class RPAccessibilityService : AccessibilityService() {
     override fun onInterrupt() {}
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
-        println("${event.className} - $event")
-        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
-            println("TYPE_WINDOW_STATE_CHANGED - ${event.className}")
-        }
+//        println("${event.className} - $event")
+//        if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
+//            println("TYPE_WINDOW_STATE_CHANGED - ${event.className}")
+//        }
 
         if (!App.state) return
 
@@ -21,16 +21,18 @@ class RPAccessibilityService : AccessibilityService() {
 
     }
 
+    private fun AccessibilityNodeInfo.findClickableParent(): AccessibilityNodeInfo? {
+        return parent?.let { if (it.isClickable) it else it.findClickableParent() }
+    }
+
     private fun wx(event: AccessibilityEvent) {
         if (event.packageName != "com.tencent.mm") return
 
         // 打开红包消息
         rootInActiveWindow
-            ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/al7")
-            ?.lastOrNull {
-                it.findAccessibilityNodeInfosByText("微信红包").any() && // 是微信红包
-                        it.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/r0").none() // 已领取/已被领完/已过期/
-            }
+            ?.findAccessibilityNodeInfosByText("微信红包")
+            ?.mapNotNull { it.findClickableParent() }
+            ?.lastOrNull { it.childCount < 3 }
             ?.also { println(it) }
             ?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
 
@@ -38,17 +40,23 @@ class RPAccessibilityService : AccessibilityService() {
         if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
             && event.className == "com.tencent.mm.plugin.luckymoney.ui.LuckyMoneyNotHookReceiveUI"
         ) {
+            println("打开红包消息了 尝试点击红包")
             handle.postDelayed({
                 rootInActiveWindow
-                    ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/den") // 开
+                    ?.findAccessibilityNodeInfosByText("开")
                     ?.firstOrNull()
-                    ?.also { println(it) }
+                    ?.also { println("瞧瞧我找到了啥 - $it") }
                     ?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    .also {
+                        println("打开红包消息了 尝试点击红包 - $it")
+                    }
                     ?: let {
+                        println("打开红包消息了 红包领完了 - $it")
                         // 红包派完了 直接返回
                         rootInActiveWindow
-                            ?.findAccessibilityNodeInfosByViewId("com.tencent.mm:id/d84")
+                            ?.findAccessibilityNodeInfosByText("返回")
                             ?.firstOrNull()
+                            ?.also { println("瞧瞧我找到了啥 - $it") }
                             ?.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     }
             }, 100)
