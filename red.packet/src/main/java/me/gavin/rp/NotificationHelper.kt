@@ -23,10 +23,6 @@ object NotificationHelper {
     const val CHANNEL_DEFAULT = "default"
     const val CHANNEL_ALERT = "alert"
 
-    fun isNotificationEnabled(context: Context): Boolean {
-        return NotificationManagerCompat.from(context).areNotificationsEnabled()
-    }
-
     @SuppressLint("InlinedApi")
     fun openSetting(context: Context, channel: String? = null) {
         when {

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import androidx.core.app.NotificationManagerCompat
 import android.app.KeyguardManager
 import androidx.core.content.getSystemService
 
@@ -48,12 +47,6 @@ class RPListenerService : NotificationListenerService() {
 
 fun isKeyguardLocked(context: Context):Boolean {
     return context.getSystemService<KeyguardManager>()?.isKeyguardLocked ?: true
-}
-
-fun isNotificationListenerEnabled(context: Context): Boolean {
-    return NotificationManagerCompat.getEnabledListenerPackages(context).let {
-        context.packageName in it
-    }
 }
 
 fun openNotificationListener(context: Context) {

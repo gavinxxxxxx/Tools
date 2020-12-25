@@ -2,6 +2,7 @@ package me.gavin.rp
 
 import android.app.Application
 import android.content.Context
+import android.preference.PreferenceManager
 import androidx.core.content.edit
 import kotlin.properties.Delegates
 
@@ -15,7 +16,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         app = this
-        state = sp.getBoolean("state", false)
+        state = sp.getBoolean("自动抢红包", false)
     }
 
     companion object {
@@ -23,14 +24,12 @@ class App : Application() {
         var state = false
             set(value) {
                 if (field != value) {
-                    app.sp.edit {
-                        putBoolean("state", value)
-                    }
+                    field = value
+                    app.sp.edit { putBoolean("自动抢红包", value) }
                 }
-                field = value
             }
     }
 
 }
 
-private val Context.sp get() = getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE)
+private val Context.sp get() = PreferenceManager.getDefaultSharedPreferences(this)

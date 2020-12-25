@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="权限"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:key="通知监听"
+            android:summary="开启通知监听以监听红包消息"
+            android:title="通知监听"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="通知"
+            android:summary="开启通知权限以发送红包提醒"
+            android:title="通知"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="辅助功能"
+            android:summary="开启辅助功能以自动打开红包\n如权限确已开启此处仍显示关，可尝试去应用详情页强行关闭应用或重启设备"
+            android:title="辅助功能"
+            app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+            android:key="自动抢红包"
+            android:summary="开启以自动打开红包"
+            android:title="自动抢红包"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="调试"
+        app:allowDividerAbove="false"
+        app:allowDividerBelow="false"
+        app:iconSpaceReserved="false">
+
+        <Preference
+            android:key="测试通知"
+            android:summary="点击测试通知是否正常启用"
+            android:title="测试通知"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="测试监听"
+            android:summary="点击测试通知监听是否正常启用"
+            android:title="测试监听"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="应用详情"
+            android:summary="点击打开应用详情"
+            android:title="应用详情"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
